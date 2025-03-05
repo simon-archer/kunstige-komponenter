@@ -1,21 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es2021",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmitOnError": true,
-    "lib": ["es2021", "dom", "DOM.Iterable"],
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
     "strict": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "outDir": "out-tsc",
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "sourceMap": true,
-    "inlineSources": true,
-    "rootDir": "./",
-    "incremental": true,
-    "skipLibCheck": true
+    "declaration": true
   },
-  "include": ["**/*.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -1,41 +1,64 @@
+/* Global styles for Kunstige Komponenter */
+
 :root {
-  /* Color Palette */
-  --color-primary: #007bff;
-  --color-secondary: #6c757d;
-  --color-background: #ffffff;
-  --color-text: #333333;
-
-  /* Typography */
-  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --font-size-base: 16px;
-  --line-height-base: 1.5;
-
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-
-  /* Border Radius */
-  --border-radius-base: 4px;
-  --border-radius-round: 50%;
-
-  /* Shadows */
-  --shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Reset and Base Styles */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  /* Color variables */
+  --ki-primary: #000000;
+  --ki-secondary: #6c757d;
+  --ki-success: #28a745;
+  --ki-danger: #dc3545;
+  --ki-warning: #ffc107;
+  --ki-info: #17a2b8;
+  --ki-light: #f8f9fa;
+  --ki-dark: #343a40;
+  
+  /* Font variables */
+  --ki-font-family: Arial, sans-serif;
+  --ki-font-size-base: 16px;
+  
+  /* Spacing variables */
+  --ki-space-1: 4px;
+  --ki-space-2: 8px;
+  --ki-space-3: 16px;
+  --ki-space-4: 24px;
+  --ki-space-5: 32px;
+  
+  /* Border variables */
+  --ki-border-radius: 12px;
+  
+  /* Corner rounding inheritance */
+  --ki-border-radius-outer: 24px;
+  --ki-border-radius-inner: 16px;
 }
 
 body {
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  color: var(--color-text);
-  background-color: var(--color-background);
+  font-family: var(--ki-font-family);
+  font-size: var(--ki-font-size-base);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Nested corner rounding utility classes */
+.ki-container {
+  border-radius: var(--ki-border-radius-outer);
+}
+
+.ki-container > * {
+  border-radius: var(--ki-border-radius-inner);
+}
+
+/* For nested components that need to preserve parent's corner radius */
+.ki-corner-inherit {
+  border-radius: inherit;
+}
+
+main {
+  display: flex;
+  padding: var(--ki-space-4);
+}
+
+/* Layout for main content area */
+main > *:not(ki-sidebar) {
+  margin-left: 20px;
+  flex: 1;
 }

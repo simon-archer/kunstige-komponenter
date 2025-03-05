@@ -1,28 +1,276 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="Description" content="Put your description here.">
-  <base href="/">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kunstige Komponenter</title>
   <style>
-    html,
+    /* Global styles */
+    :root {
+      /* Color variables */
+      --ki-primary: #007bff;
+      --ki-secondary: #6c757d;
+      --ki-success: #28a745;
+      --ki-danger: #dc3545;
+      --ki-warning: #ffc107;
+      --ki-info: #17a2b8;
+      --ki-light: #f8f9fa;
+      --ki-dark: #343a40;
+      
+      /* Font variables */
+      --ki-font-family: Arial, sans-serif;
+      --ki-font-size-base: 16px;
+      
+      /* Spacing variables */
+      --ki-space-1: 4px;
+      --ki-space-2: 8px;
+      --ki-space-3: 16px;
+      --ki-space-4: 24px;
+      --ki-space-5: 32px;
+      
+      /* Border variables */
+      --ki-border-radius: 4px;
+    }
+    
     body {
+      font-family: var(--ki-font-family);
+      font-size: var(--ki-font-size-base);
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
-      background-color: #ededed;
+      box-sizing: border-box;
+      background-color: #f8f9fa;
+    }
+    
+    main {
+      display: flex;
+      padding: var(--ki-space-4);
+    }
+    
+    /* Layout for main content area */
+    main > *:not(ki-sidebar) {
+      margin-left: 20px;
+      flex: 1;
+    }
+    
+    /* Component demo styles */
+    ki-button {
+      margin: 10px;
+    }
+    .component-demo {
+      padding: 30px;
+      background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+      border-radius: 24px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      transition: box-shadow 0.3s ease;
+    }
+    .component-demo:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+    .component-section {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #0077ff;
+      display: inline-block;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #343a40;
+      border-bottom: 2px solid rgba(0, 123, 255, 0.2);
+      padding-bottom: 10px;
+    }
+    h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #495057;
+    }
+    p {
+      color: #6c757d;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    
+    /* Icon display grid */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+      text-align: center;
+    }
+    
+    .icon-item {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 16px 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      transition: box-shadow 0.3s ease, background-color 0.3s ease;
+      cursor: pointer;
+      border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+    
+    .icon-item:hover {
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+      background-color: #fafbfc;
+    }
+    
+    .icon-item ki-icon {
+      margin-bottom: 10px;
+      color: var(--ki-primary);
+    }
+    
+    .icon-name {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #495057;
     }
   </style>
-  <title>kunstige-komponenter</title>
 </head>
-
 <body>
-  <kunstige-komponenter></kunstige-komponenter>
+  <script src="src/components/atoms/ki-icon.js"></script>
+  <script src="src/components/atoms/ki-button.js"></script>
+  <script src="src/components/molecules/ki-sidebar.js"></script>
+  <script src="src/components/organisms/ki-header.js"></script>
+  <script src="src/components/organisms/ki-footer.js"></script>
+  
+  <ki-header></ki-header>
+  
+  <main>
+    <ki-sidebar></ki-sidebar>
+    
+    <div class="content">
+      <h1>Kunstige Komponenter</h1>
+      <p>A simple web component design system</p>
+      
+      <div class="component-demo">
+        <h2>Button Component</h2>
+        <div class="component-section">
+          <h3>Basic Buttons</h3>
+          <ki-button>Default Button</ki-button>
+          <ki-button variant="primary">Primary Button</ki-button>
+          <ki-button variant="secondary">Secondary Button</ki-button>
+          <ki-button variant="tertiary">Tertiary Button</ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Buttons with Icons</h3>
+          <ki-button icon-start="Arrow-Up">Next</ki-button>
+          <ki-button variant="primary" icon-start="File">Add File</ki-button>
+          <ki-button variant="secondary" icon-end="Globe">Browse</ki-button>
+          <ki-button variant="tertiary" icon-start="Stop">Cancel</ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Icon Only Buttons</h3>
+          <ki-button icon-only="File"></ki-button>
+          <ki-button variant="primary" icon-only="Search"></ki-button>
+          <ki-button variant="secondary" icon-only="Globe"></ki-button>
+          <ki-button variant="tertiary" icon-only="Arrow-Up"></ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Button Sizes</h3>
+          <ki-button size="small" icon-start="Arrow-Up">Small</ki-button>
+          <ki-button icon-start="Arrow-Up">Medium</ki-button>
+          <ki-button size="large" icon-start="Arrow-Up">Large</ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Disabled State</h3>
+          <ki-button disabled>Disabled</ki-button>
+          <ki-button variant="primary" disabled icon-start="File">Disabled</ki-button>
+          <ki-button variant="secondary" disabled icon-only="Stop"></ki-button>
+        </div>
+      </div>
 
-  <script type="module" src="./out-tsc/src/kunstige-komponenter.js"></script>
+      <div class="component-demo">
+        <h2>Icon Component</h2>
+        <p>Our kunstige-ikoner system uses SVG for crisp rendering at any size. Icons are loaded dynamically from SVG files.</p>
+        
+        <div class="component-section">
+          <h3>Available Icons</h3>
+          <div class="icon-grid">
+            <div class="icon-item">
+              <ki-icon name="Arrow-Up" size="large"></ki-icon>
+              <div class="icon-name">Arrow-Up</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="Globe" size="large"></ki-icon>
+              <div class="icon-name">Globe</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="Search" size="large"></ki-icon>
+              <div class="icon-name">Search</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="File" size="large"></ki-icon>
+              <div class="icon-name">File</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="Loading" size="large"></ki-icon>
+              <div class="icon-name">Loading</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="Stop" size="large"></ki-icon>
+              <div class="icon-name">Stop</div>
+            </div>
+            <div class="icon-item">
+              <ki-icon name="Placeholder" size="large"></ki-icon>
+              <div class="icon-name">Placeholder</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Icon Sizes</h3>
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="text-align: center;">
+              <ki-icon name="Search" size="small"></ki-icon>
+              <p style="margin-top: 10px; font-size: 14px;">Small</p>
+            </div>
+            <div style="text-align: center;">
+              <ki-icon name="Search" size="medium"></ki-icon>
+              <p style="margin-top: 10px; font-size: 14px;">Medium</p>
+            </div>
+            <div style="text-align: center;">
+              <ki-icon name="Search" size="large"></ki-icon>
+              <p style="margin-top: 10px; font-size: 14px;">Large</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Colored Icons</h3>
+          <div style="display: flex; gap: 20px;">
+            <ki-icon name="Globe" size="large" color="#007bff"></ki-icon>
+            <ki-icon name="Globe" size="large" color="#28a745"></ki-icon>
+            <ki-icon name="Globe" size="large" color="#dc3545"></ki-icon>
+            <ki-icon name="Globe" size="large" color="#ffc107"></ki-icon>
+            <ki-icon name="Globe" size="large" color="#6f42c1"></ki-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-demo">
+        <h2>More Components Coming Soon</h2>
+        <p>The design system is under development.</p>
+      </div>
+    </div>
+  </main>
+  
+  <ki-footer></ki-footer>
 </body>
-
 </html>
