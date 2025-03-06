@@ -270,7 +270,7 @@ class KiMessageField extends HTMLElement {
             min-height: 36px;
             max-height: 150px;
             padding: 12px 14px;
-            font-size: 12px;
+            font-size: 14px;
             border: none;
             background: none;
             color: #333;

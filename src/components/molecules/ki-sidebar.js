@@ -22,20 +22,25 @@ class KiSidebar extends HTMLElement {
   }
 
   addEventListeners() {
-    const cards = this.shadowRoot.querySelectorAll('.component-card');
-    cards.forEach(card => {
-      card.addEventListener('click', (e) => {
-        const targetId = card.dataset.target;
-        if (targetId) {
-          const event = new CustomEvent('navigation', {
-            detail: { target: targetId },
-            bubbles: true,
-            composed: true
-          });
-          this.dispatchEvent(event);
+    // Use event delegation for component cards
+    const container = this.shadowRoot.querySelector('.components-container');
+    if (container) {
+      container.addEventListener('click', (e) => {
+        // Find the closest card element
+        const card = e.target.closest('.component-card');
+        if (card) {
+          const targetId = card.dataset.target;
+          if (targetId) {
+            const event = new CustomEvent('navigation', {
+              detail: { target: targetId },
+              bubbles: true,
+              composed: true
+            });
+            this.dispatchEvent(event);
+          }
         }
       });
-    });
+    }
   }
 
   render() {
@@ -45,13 +50,20 @@ class KiSidebar extends HTMLElement {
           :host {
             display: block;
             width: 240px;
-            background-color: #ffffff;
             height: 100%;
-            padding: 16px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             overflow-y: auto;
           }
+          
+          .sidebar-container {
+            padding: 0;
+            height: 100%;
+            box-sizing: border-box;
+          }
+          
+          .sidebar-content {
+            padding: 4px 8px;
+          }
+          
           .sidebar-title {
             font-size: 16px;
             font-weight: bold;
@@ -60,24 +72,20 @@ class KiSidebar extends HTMLElement {
             padding-bottom: 8px;
             border-bottom: 1px solid #eee;
           }
+          
           .components-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
           }
-          .component-card {
-            cursor: pointer;
-            transition: transform 0.2s ease;
-          }
-          .component-card:hover {
-            transform: translateY(-2px);
-          }
+          
           .component-name {
             font-weight: 500;
             margin: 0 0 4px 0;
             color: var(--ki-primary, #000000);
             font-size: 14px;
           }
+          
           .component-desc {
             font-size: 12px;
             color: #666;
@@ -85,16 +93,21 @@ class KiSidebar extends HTMLElement {
             line-height: 1.4;
           }
         </style>
+        
         <div class="sidebar-container">
-          <div class="sidebar-title">Components</div>
-          <div class="components-container">
-            ${this.components.map(comp => `
-              <ki-card variant="default" elevation="low" class="component-card" data-target="${comp.id}">
-                <h3 class="component-name">${comp.name}</h3>
-                <p class="component-desc">${comp.desc}</p>
-              </ki-card>
-            `).join('')}
-          </div>
+          <ki-card variant="rounded" elevation="low">
+            <div class="sidebar-content">
+              <div class="sidebar-title">Components</div>
+              <div class="components-container">
+                ${this.components.map(comp => `
+                  <ki-card variant="default" elevation="none" class="component-card" data-target="${comp.id}">
+                    <h3 class="component-name">${comp.name}</h3>
+                    <p class="component-desc">${comp.desc}</p>
+                  </ki-card>
+                `).join('')}
+              </div>
+            </div>
+          </ki-card>
         </div>
       `;
     }
