@@ -28,9 +28,9 @@ class KiCard extends HTMLElement {
     if (this.shadowRoot) {
       // Map variant to border-radius values
       const radiusMap = {
-        'default': 'var(--ki-border-radius-medium, 12px)',
         'sharp': 'var(--ki-border-radius-none, 0px)',
-        'rounded': 'var(--ki-border-radius-large, 16px)',
+        'default': 'var(--ki-border-radius-medium, 16px)',
+        'rounded': 'var(--ki-border-radius-large, 32px)',
         'pill': 'var(--ki-border-radius-pill, 9999px)'
       };
 

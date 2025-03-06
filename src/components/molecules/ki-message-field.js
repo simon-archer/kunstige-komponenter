@@ -30,6 +30,14 @@ class KiMessageField extends HTMLElement {
     const textarea = this.shadowRoot.querySelector('textarea');
     const button = this.shadowRoot.querySelector('.right-tools ki-control-button');
     const attachButton = this.shadowRoot.querySelector('.attachment-button');
+    
+    // Add click listener to textarea container to help with scrolling
+    const inputArea = this.shadowRoot.querySelector('.input-area');
+    if (inputArea) {
+      inputArea.addEventListener('click', () => {
+        if (textarea) textarea.focus();
+      });
+    }
 
     if (textarea) {
       textarea.addEventListener('input', (e) => {
@@ -77,6 +85,9 @@ class KiMessageField extends HTMLElement {
   }
   
   adjustTextareaHeight(textarea) {
+    // Store current scroll position
+    const scrollTop = textarea.scrollTop;
+    
     // Reset height to auto to measure the scrollHeight properly
     textarea.style.height = 'auto';
     
@@ -91,13 +102,20 @@ class KiMessageField extends HTMLElement {
     // Apply the new height
     textarea.style.height = `${newHeight}px`;
     
-    // Add scrolling class if needed
+    // Restore scroll position
+    textarea.scrollTop = scrollTop;
+    
+    // Add scrolling class if needed for border radius change
     const container = this.shadowRoot.querySelector('.message-container');
     if (container) {
       if (contentHeight > maxHeight) {
         container.classList.add('scrolling');
+        
+        // Add additional padding for scrollbar
+        textarea.style.paddingRight = '18px'; 
       } else {
         container.classList.remove('scrolling');
+        textarea.style.paddingRight = '14px';
       }
     }
   }
@@ -242,10 +260,6 @@ class KiMessageField extends HTMLElement {
             max-width: 100%;
           }
           
-          .message-container.scrolling {
-            border-radius: 16px;
-          }
-          
           .input-area {
             display: flex;
             padding: 0;
@@ -256,7 +270,7 @@ class KiMessageField extends HTMLElement {
             min-height: 36px;
             max-height: 150px;
             padding: 12px 14px;
-            font-size: 15px;
+            font-size: 12px;
             border: none;
             background: none;
             color: #333;
@@ -288,21 +302,12 @@ class KiMessageField extends HTMLElement {
           
           textarea::-webkit-scrollbar-thumb {
             background-color: #ccc;
-            border-radius: 8px;
             border: 2px solid transparent;
             background-clip: padding-box;
           }
           
           textarea::-webkit-scrollbar-thumb:hover {
             background-color: #aaa;
-          }
-          
-          .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 12px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
           }
           
           .left-tools {
@@ -315,6 +320,13 @@ class KiMessageField extends HTMLElement {
             align-items: center;
           }
           
+          .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+          }
           .attachment-button {
             width: 32px;
             height: 32px;
@@ -327,23 +339,7 @@ class KiMessageField extends HTMLElement {
             cursor: pointer;
             color: #666;
             transition: background-color 0.2s;
-          }
-          
-          .attachment-button:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            color: #333;
-          }
-          
-          .attachments-container {
-            display: flex;
-            flex-wrap: wrap;
-            margin-left: 8px;
-          }
-          
-          ki-control-button {
-            margin: 0;
-            padding: 0;
-          }
+          }  
         </style>
         
         <div class="message-container">
@@ -355,13 +351,11 @@ class KiMessageField extends HTMLElement {
           </div>
           <div class="toolbar">
             <div class="left-tools">
-              <button class="attachment-button" type="button" title="Attach file">
-                <ki-icon name="File" size="medium"></ki-icon>
-              </button>
+              <ki-button class="attachment-button" variant="tertiary" icon-only="File" size="small" title="Attach file"></ki-button>
               <div class="attachments-container"></div>
             </div>
             <div class="right-tools">
-              <ki-control-button state="${this.state}" size="medium"></ki-control-button>
+              <ki-control-button state="${this.state}" size="small"></ki-control-button>
             </div>
           </div>
         </div>

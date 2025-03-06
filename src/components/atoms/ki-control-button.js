@@ -72,7 +72,6 @@ class KiControlButton extends HTMLElement {
       <style>
         :host {
           display: inline-block;
-          margin: 2px;
         }
         
         button {
@@ -82,7 +81,6 @@ class KiControlButton extends HTMLElement {
           aspect-ratio: 1 / 1;
           width: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
           height: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
-          padding: 0;
           border: none;
           border-radius: var(--ki-border-radius, 9999px);
           cursor: pointer;

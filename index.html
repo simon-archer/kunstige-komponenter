@@ -33,9 +33,7 @@
     }
     
     /* Component demo styles */
-    ki-button {
-      margin: 10px;
-    }
+
     .component-demo {
       padding: 30px;
       background: linear-gradient(to bottom, #ffffff, #f8f9fa);
@@ -227,8 +225,25 @@
           <h3>Buttons with Icons</h3>
           <ki-button icon-start="Arrow-Up">Next</ki-button>
           <ki-button variant="primary" icon-start="File">Add File</ki-button>
-          <ki-button variant="secondary" icon-end="Globe">Browse</ki-button>
+          <ki-button variant="secondary" icon-start="Globe">Browse</ki-button>
           <ki-button variant="tertiary" icon-start="Stop">Cancel</ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Buttons with End Icons</h3>
+          <ki-button icon-end="Arrow-Up">Next</ki-button>
+          <ki-button variant="primary" icon-end="File">Add File</ki-button>
+          <ki-button variant="secondary" icon-end="Globe">Browse</ki-button>
+          <ki-button variant="tertiary" icon-end="Stop">Cancel</ki-button>
+        </div>
+        
+        <div class="component-section">
+          <h3>Toggle Buttons</h3>
+          <ki-toggle-button id="toggle-1">Toggle Me</ki-toggle-button>
+          <ki-toggle-button icon-start="Globe">Toggle with Icon</ki-toggle-button>
+          <ki-toggle-button toggled>Pre-toggled</ki-toggle-button>
+          <ki-toggle-button disabled>Disabled Toggle</ki-toggle-button>
+          <p id="toggle-status" class="demo-description">Click a toggle button to see it change state</p>
         </div>
         
         <div class="component-section">
@@ -379,8 +394,8 @@
         <div class="component-section">
           <h3>Card with Content</h3>
           <ki-card variant="rounded" elevation="medium" style="max-width: 400px;">
-            <div style="padding: 10px;">
-              <h3 style="margin-top: 0;">Card Title</h3>
+            <div style="padding: 8px;">
+              <h3>Card Title</h3>
               <p>This is an example of a card with content. Cards can contain any content, including text, images, and other components.</p>
               <ki-button variant="primary">Action Button</ki-button>
             </div>
@@ -419,44 +434,7 @@
             <ki-message-field placeholder="Type your response..."></ki-message-field>
           </ki-card>
         </div>
-        
-        <div class="component-section">
-          <h3>Message Field with Long Text</h3>
-          <div style="max-width: 500px;">
-            <ki-message-field id="long-message-field" placeholder="Type a long message to see scrolling..."></ki-message-field>
-            <button id="fill-with-long-text" style="margin-top: 12px; padding: 8px 12px;">Fill with Long Text</button>
-          </div>
-        </div>
-      </div>
 
-      <div class="component-demo">
-        <h2>Input Component</h2>
-        <p>A basic input field component for text entry.</p>
-        
-        <div class="component-section">
-          <h3>Basic Input</h3>
-          <div style="max-width: 300px; margin-bottom: 16px;">
-            <ki-input placeholder="Enter text..."></ki-input>
-          </div>
-          
-          <div style="max-width: 300px; margin-bottom: 16px;">
-            <ki-input value="Pre-filled value"></ki-input>
-          </div>
-          
-          <div style="max-width: 300px;">
-            <ki-input placeholder="Disabled input" disabled></ki-input>
-          </div>
-        </div>
-        
-        <div class="component-section">
-          <h3>Input with Card</h3>
-          <ki-card variant="rounded" elevation="low" style="max-width: 300px;">
-            <div style="padding: 8px;">
-              <ki-input placeholder="Search within card..."></ki-input>
-            </div>
-          </ki-card>
-        </div>
-      </div>
 
       <div class="component-demo">
         <h2>List Component</h2>
@@ -522,6 +500,19 @@
       <script>
         // Auto-cycling demo for control button states
         document.addEventListener('DOMContentLoaded', () => {
+          // Toggle button demo
+          const toggleStatus = document.getElementById('toggle-status');
+          const toggleButtons = document.querySelectorAll('ki-toggle-button');
+          
+          if (toggleButtons.length > 0 && toggleStatus) {
+            toggleButtons.forEach(toggleBtn => {
+              toggleBtn.addEventListener('ki-toggle', (e) => {
+                const state = e.detail.toggled ? 'on' : 'off';
+                toggleStatus.textContent = `Button "${toggleBtn.textContent.trim()}" was toggled ${state}`;
+              });
+            });
+          }
+          
           // List demo
           const clickableItems = document.querySelectorAll('.clickable-item');
           const listOutput = document.getElementById('list-demo-output');
