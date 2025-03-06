@@ -22,7 +22,7 @@ class KiFooter extends HTMLElement {
             margin-top: 60px;
             position: relative;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            border-radius: var(--ki-border-radius-outer, 8px) var(--ki-border-radius-outer, 8px) 0 0;
+            border-radius: var(--ki-border-radius-outer, 24px) var(--ki-border-radius-outer, 24px) 0 0;
           }
           .footer-container {
             display: flex;
@@ -55,7 +55,7 @@ class KiFooter extends HTMLElement {
             left: 0;
             background-color: rgba(255, 255, 255, 0.7);
             transition: width 0.3s ease;
-            border-radius: var(--ki-border-radius-inner, 4px);
+            border-radius: var(--ki-border-radius-inner, 9999px);
           }
           .footer-link:hover::after {
             width: 100%;
@@ -65,7 +65,7 @@ class KiFooter extends HTMLElement {
             font-size: 14px;
             color: #adb5bd;
             padding: 10px 20px;
-            border-radius: var(--ki-border-radius-outer, 8px);
+            border-radius: var(--ki-border-radius-inner, 9999px);
             background-color: rgba(0, 0, 0, 0.15);
           }
         </style>

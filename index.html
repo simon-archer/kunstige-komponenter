@@ -6,30 +6,10 @@
   <title>Kunstige Komponenter</title>
   <style>
     /* Global styles */
+    @import url('src/styles/global.css');
+    
     :root {
-      /* Color variables */
-      --ki-primary: #007bff;
-      --ki-secondary: #6c757d;
-      --ki-success: #28a745;
-      --ki-danger: #dc3545;
-      --ki-warning: #ffc107;
-      --ki-info: #17a2b8;
-      --ki-light: #f8f9fa;
-      --ki-dark: #343a40;
-      
-      /* Font variables */
-      --ki-font-family: Arial, sans-serif;
-      --ki-font-size-base: 16px;
-      
-      /* Spacing variables */
-      --ki-space-1: 4px;
-      --ki-space-2: 8px;
-      --ki-space-3: 16px;
-      --ki-space-4: 24px;
-      --ki-space-5: 32px;
-      
-      /* Border variables */
-      --ki-border-radius: 4px;
+      /* Any additional local overrides can go here */
     }
     
     body {
@@ -59,7 +39,7 @@
     .component-demo {
       padding: 30px;
       background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-      border-radius: 24px;
+      border-radius: var(--ki-border-radius-outer, 24px);
       margin-bottom: 40px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(0, 0, 0, 0.03);
@@ -79,7 +59,7 @@
     h1 {
       font-size: 36px;
       margin-bottom: 10px;
-      color: #0077ff;
+      color: var(--ki-primary, #000000);
       display: inline-block;
     }
     h2 {
@@ -87,8 +67,8 @@
       margin-bottom: 20px;
       font-size: 24px;
       font-weight: 600;
-      color: #343a40;
-      border-bottom: 2px solid rgba(0, 123, 255, 0.2);
+      color: var(--ki-dark, #343a40);
+      border-bottom: 2px solid rgba(0, 0, 0, 0.2);
       padding-bottom: 10px;
     }
     h3 {
@@ -137,12 +117,90 @@
       font-size: 14px;
       color: #495057;
     }
+    
+    .button-controls {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .demo-description {
+      margin-top: 10px;
+      font-style: italic;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .state-display {
+      display: flex;
+      gap: 40px;
+      margin: 20px 0;
+    }
+    
+    .state-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .state-display-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .state-label {
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+    
+    /* Component navigation grid */
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 30px 0 50px;
+    }
+    
+    .component-nav-card h3 {
+      margin-top: 0;
+      color: var(--ki-primary, #000000);
+    }
+    
+    .component-nav-card p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .component-nav-card .component-link {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: var(--ki-primary, #000000);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: opacity 0.2s;
+    }
+    
+    .component-nav-card .component-link:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
   <script src="src/components/atoms/ki-icon.js"></script>
   <script src="src/components/atoms/ki-button.js"></script>
+  <script src="src/components/atoms/ki-control-button.js"></script>
+  <script src="src/components/atoms/ki-list.js"></script>
+  <script src="src/components/atoms/ki-card.js"></script>
+  <script src="src/components/atoms/ki-input.js"></script>
   <script src="src/components/molecules/ki-sidebar.js"></script>
+  <script src="src/components/molecules/ki-message-field.js"></script>
   <script src="src/components/organisms/ki-header.js"></script>
   <script src="src/components/organisms/ki-footer.js"></script>
   
@@ -255,19 +313,336 @@
         <div class="component-section">
           <h3>Colored Icons</h3>
           <div style="display: flex; gap: 20px;">
-            <ki-icon name="Globe" size="large" color="#007bff"></ki-icon>
-            <ki-icon name="Globe" size="large" color="#28a745"></ki-icon>
-            <ki-icon name="Globe" size="large" color="#dc3545"></ki-icon>
-            <ki-icon name="Globe" size="large" color="#ffc107"></ki-icon>
-            <ki-icon name="Globe" size="large" color="#6f42c1"></ki-icon>
+            <ki-icon name="Globe" size="large" color="var(--ki-primary, #000000)"></ki-icon>
+            <ki-icon name="Globe" size="large" color="var(--ki-success, #28a745)"></ki-icon>
+            <ki-icon name="Globe" size="large" color="var(--ki-danger, #dc3545)"></ki-icon>
+            <ki-icon name="Globe" size="large" color="var(--ki-warning, #ffc107)"></ki-icon>
+            <ki-icon name="Globe" size="large" color="var(--ki-dark, #343a40)"></ki-icon>
           </div>
         </div>
       </div>
 
       <div class="component-demo">
-        <h2>More Components Coming Soon</h2>
-        <p>The design system is under development.</p>
+        <h2>Card Component</h2>
+        <p>A versatile card component with customizable corner roundings and elevations.</p>
+        
+        <div class="component-section">
+          <h3>Corner Radius Variants</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+            <ki-card variant="sharp">
+              <h4>Sharp Corners</h4>
+              <p>No border radius (0px)</p>
+            </ki-card>
+            
+            <ki-card variant="default">
+              <h4>Default</h4>
+              <p>Medium border radius (12px)</p>
+            </ki-card>
+            
+            <ki-card variant="rounded">
+              <h4>Rounded</h4>
+              <p>Large border radius (16px)</p>
+            </ki-card>
+            
+            <ki-card variant="pill">
+              <h4>Pill</h4>
+              <p>Fully rounded corners</p>
+            </ki-card>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Elevation Levels</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <ki-card elevation="none">
+              <h4>No Elevation</h4>
+              <p>Flat appearance</p>
+            </ki-card>
+            
+            <ki-card elevation="low">
+              <h4>Low Elevation</h4>
+              <p>Subtle shadow</p>
+            </ki-card>
+            
+            <ki-card elevation="medium">
+              <h4>Medium Elevation</h4>
+              <p>Default shadow</p>
+            </ki-card>
+            
+            <ki-card elevation="high">
+              <h4>High Elevation</h4>
+              <p>Prominent shadow</p>
+            </ki-card>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Card with Content</h3>
+          <ki-card variant="rounded" elevation="medium" style="max-width: 400px;">
+            <div style="padding: 10px;">
+              <h3 style="margin-top: 0;">Card Title</h3>
+              <p>This is an example of a card with content. Cards can contain any content, including text, images, and other components.</p>
+              <ki-button variant="primary">Action Button</ki-button>
+            </div>
+          </ki-card>
+        </div>
       </div>
+
+      <div class="component-demo">
+        <h2>Message Field Component</h2>
+        <p>A message input with file attachments, auto-expanding textarea, and control button.</p>
+        
+        <div class="component-section">
+          <h3>Enhanced Chat Input Form</h3>
+          <div style="max-width: 600px; margin-bottom: 20px;">
+            <ki-message-field id="message-field" placeholder="Hvordan kan jeg bruke Designsystemet?"></ki-message-field>
+          </div>
+          <p id="message-result" class="demo-description">Type a message, attach files, and press Enter or the send button.</p>
+        </div>
+        
+        <div class="component-section">
+          <h3>Message Field in Chat Interface</h3>
+          <ki-card variant="rounded" elevation="medium" style="max-width: 500px; padding: 16px;">
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px;">
+              <div style="align-self: flex-start; background: #f5f5f5; padding: 12px; border-radius: 16px; max-width: 80%;">
+                <p style="margin: 0; font-size: 14px;">Hello, how can I help you today?</p>
+              </div>
+              
+              <div style="align-self: flex-end; background: #e1f5fe; padding: 12px; border-radius: 16px; max-width: 80%;">
+                <p style="margin: 0; font-size: 14px;">I need help with the design system components.</p>
+              </div>
+              
+              <div style="align-self: flex-start; background: #f5f5f5; padding: 12px; border-radius: 16px; max-width: 80%;">
+                <p style="margin: 0; font-size: 14px;">Sure! The design system has several components like buttons, cards, and inputs that you can use in your projects.</p>
+              </div>
+            </div>
+            <ki-message-field placeholder="Type your response..."></ki-message-field>
+          </ki-card>
+        </div>
+        
+        <div class="component-section">
+          <h3>Message Field with Long Text</h3>
+          <div style="max-width: 500px;">
+            <ki-message-field id="long-message-field" placeholder="Type a long message to see scrolling..."></ki-message-field>
+            <button id="fill-with-long-text" style="margin-top: 12px; padding: 8px 12px;">Fill with Long Text</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-demo">
+        <h2>Input Component</h2>
+        <p>A basic input field component for text entry.</p>
+        
+        <div class="component-section">
+          <h3>Basic Input</h3>
+          <div style="max-width: 300px; margin-bottom: 16px;">
+            <ki-input placeholder="Enter text..."></ki-input>
+          </div>
+          
+          <div style="max-width: 300px; margin-bottom: 16px;">
+            <ki-input value="Pre-filled value"></ki-input>
+          </div>
+          
+          <div style="max-width: 300px;">
+            <ki-input placeholder="Disabled input" disabled></ki-input>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Input with Card</h3>
+          <ki-card variant="rounded" elevation="low" style="max-width: 300px;">
+            <div style="padding: 8px;">
+              <ki-input placeholder="Search within card..."></ki-input>
+            </div>
+          </ki-card>
+        </div>
+      </div>
+
+      <div class="component-demo">
+        <h2>List Component</h2>
+        <p>A simple list component that can be used to display lists of items.</p>
+        
+        <div class="component-section">
+          <h3>Basic List</h3>
+          <ki-list>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+            <li>Item 4</li>
+          </ki-list>
+        </div>
+        
+        <div class="component-section">
+          <h3>List with Interactive Items</h3>
+          <ki-list>
+            <li class="clickable-item">Clickable Item 1</li>
+            <li class="clickable-item">Clickable Item 2</li>
+            <li class="clickable-item">Clickable Item 3</li>
+          </ki-list>
+          <p id="list-demo-output" class="demo-description">Click an item to see it work</p>
+        </div>
+      </div>
+
+      <div class="component-demo">
+        <h2>Control Button Component</h2>
+        <p>A control button that automatically cycles through send, loading, and stop states.</p>
+        
+        <div class="component-section">
+          <h3>Auto-cycling Control Button</h3>
+          <div class="state-display-left">
+            <ki-control-button id="auto-button" size="large"></ki-control-button>
+            <p class="state-label">Current state: <span id="current-state">send</span></p>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Control Button Sizes</h3>
+          <div class="state-display">
+            <div class="state-item">
+              <ki-control-button size="small"></ki-control-button>
+              <p class="demo-description">Small</p>
+            </div>
+            <div class="state-item">
+              <ki-control-button size="medium"></ki-control-button>
+              <p class="demo-description">Medium</p>
+            </div>
+            <div class="state-item">
+              <ki-control-button size="large"></ki-control-button>
+              <p class="demo-description">Large</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="component-section">
+          <h3>Disabled Control Button</h3>
+          <ki-control-button disabled></ki-control-button>
+        </div>
+      </div>
+      
+      <script>
+        // Auto-cycling demo for control button states
+        document.addEventListener('DOMContentLoaded', () => {
+          // List demo
+          const clickableItems = document.querySelectorAll('.clickable-item');
+          const listOutput = document.getElementById('list-demo-output');
+          
+          if (clickableItems.length > 0 && listOutput) {
+            clickableItems.forEach(item => {
+              item.addEventListener('click', () => {
+                listOutput.textContent = `Clicked: ${item.textContent}`;
+              });
+            });
+          }
+          
+          // Setup sidebar navigation
+          const sidebar = document.querySelector('ki-sidebar');
+          if (sidebar) {
+            sidebar.addEventListener('navigation', (e) => {
+              const targetId = e.detail.target;
+              const targetElement = document.getElementById(targetId);
+              if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+              }
+            });
+          }
+          
+          // Setup message field
+          const messageField = document.getElementById('message-field');
+          const messageResult = document.getElementById('message-result');
+          if (messageField && messageResult) {
+            messageField.addEventListener('message-sent', (e) => {
+              const attachmentCount = e.detail.attachments ? e.detail.attachments.length : 0;
+              const attachmentText = attachmentCount > 0 ? 
+                ` with ${attachmentCount} attachment${attachmentCount > 1 ? 's' : ''}` : '';
+              
+              messageResult.textContent = `Message sent: "${e.detail.value}"${attachmentText}`;
+              
+              if (attachmentCount > 0) {
+                // Display attachment names
+                const fileNames = e.detail.attachments.map(file => file.name).join(', ');
+                const fileDetails = document.createElement('div');
+                fileDetails.style.fontSize = '12px';
+                fileDetails.style.marginTop = '4px';
+                fileDetails.style.color = '#666';
+                fileDetails.textContent = `Files: ${fileNames}`;
+                
+                // Clear previous details
+                const oldDetails = messageResult.querySelector('div');
+                if (oldDetails) messageResult.removeChild(oldDetails);
+                
+                messageResult.appendChild(fileDetails);
+              } else {
+                // Clear any previous details
+                const oldDetails = messageResult.querySelector('div');
+                if (oldDetails) messageResult.removeChild(oldDetails);
+              }
+            });
+            
+            messageField.addEventListener('message-canceled', () => {
+              messageResult.textContent = 'Message canceled';
+              // Clear any details
+              const oldDetails = messageResult.querySelector('div');
+              if (oldDetails) messageResult.removeChild(oldDetails);
+            });
+          }
+          
+          // Setup long message demo
+          const longMessageField = document.getElementById('long-message-field');
+          const fillButton = document.getElementById('fill-with-long-text');
+          if (longMessageField && fillButton) {
+            fillButton.addEventListener('click', () => {
+              const longText = `This is a demonstration of how the message field handles long text that exceeds the maximum height. When the content becomes too long, the text area will start scrolling instead of continuing to expand. This provides a good user experience by keeping the interface compact while still allowing for lengthy messages. The border radius will also adjust slightly when scrolling mode is activated to give a visual indication that there is more content available by scrolling.`;
+              
+              // Find the textarea element inside the message field
+              const textarea = longMessageField.shadowRoot.querySelector('textarea');
+              if (textarea) {
+                textarea.value = longText;
+                // Simulate user typing by triggering input event
+                const event = new Event('input', {
+                  bubbles: true,
+                  cancelable: true
+                });
+                textarea.dispatchEvent(event);
+              }
+            });
+          }
+          
+          // Control button demo
+          const autoButton = document.getElementById('auto-button');
+          const currentState = document.getElementById('current-state');
+          
+          if (autoButton && currentState) {
+            // Initial state
+            autoButton.state = 'send';
+            currentState.textContent = 'send';
+            
+            // Define cycle sequence and timing
+            const stateSequence = [
+              { state: 'send', delay: 2000 },     // Show send for 2 seconds
+              { state: 'loading', delay: 2000 },  // Show loading for 2 seconds
+              { state: 'stop', delay: 3000 }      // Show stop for 3 seconds
+            ];
+            
+            let currentIndex = 0;
+            
+            // Start the auto-cycling
+            function cycle() {
+              const { state, delay } = stateSequence[currentIndex];
+              autoButton.state = state;
+              currentState.textContent = state;
+              
+              // Move to the next state
+              currentIndex = (currentIndex + 1) % stateSequence.length;
+              
+              // Schedule the next state change
+              setTimeout(cycle, delay);
+            }
+            
+            // Start cycling after 2 seconds
+            setTimeout(cycle, 2000);
+          }
+        });
+      </script>
     </div>
   </main>
   

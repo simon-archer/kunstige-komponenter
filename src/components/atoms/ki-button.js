@@ -27,9 +27,9 @@ class KiButton extends HTMLElement {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 16px;
+            padding: 10px 15px;
             border: none;
-            border-radius: var(--ki-border-radius, 4px);
+            border-radius: var(--ki-border-radius, 9999px);
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
@@ -44,7 +44,7 @@ class KiButton extends HTMLElement {
           }
           button:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 1), 0 0 0 6px rgba(0, 0, 255, 1);
           }
           button.primary {
             background-color: var(--ki-primary, #000000);
@@ -68,11 +68,13 @@ class KiButton extends HTMLElement {
           }
           button.tertiary {
             background-color: #ffffff;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
             border: 1px solid #e0e6ed;
             color: var(--ki-primary, #000000);
           }
           button.tertiary:hover:not(:disabled) {
             background-color: #f8fafc;
+
             border-color: #c9d4df;
           }
           button.tertiary:active:not(:disabled) {

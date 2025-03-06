@@ -23,11 +23,11 @@
   --ki-space-5: 32px;
   
   /* Border variables */
-  --ki-border-radius: 12px;
+  --ki-border-radius: 9999px;
   
   /* Corner rounding inheritance */
   --ki-border-radius-outer: 24px;
-  --ki-border-radius-inner: 16px;
+  --ki-border-radius-inner: 9999px;
 }
 
 body {
