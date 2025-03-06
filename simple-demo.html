@@ -4,11 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KiButton Example</title>
-  <script type="module" src="https://cdn.jsdelivr.net/gh/simon-archer/kunstige-komponenter@master/src/components/atoms/ki-button.js"></script>
+  <script type="module">
+    import bundleInfo from 'https://cdn.jsdelivr.net/gh/simon-archer/kunstige-komponenter@master/enhanced-bundle.js';
+  </script>
 </head>
 <body>
-  <ki-button variant="default" size="medium">Click Me</ki-button>
+  <ki-button variant="primary" size="medium">Click Me</ki-button>
   <ki-button variant="secondary" size="large" >With Icons</ki-button>
   <ki-button variant="tertiary" size="small" disabled>Disabled</ki-button>
+  <ki-message-field></ki-message-field>
 </body>
 </html>
