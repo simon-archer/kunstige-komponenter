@@ -831,7 +831,7 @@ const KI_COMPONENTS = (function() {
   return {
     // Bundle info
     name: 'kunstige-komponenter',
-    version: '0.1.0',
+    version: '0.1.1',
     components: ['ki-icon', 'ki-button', 'ki-control-button', 'ki-message-field'],
     description: 'A completely self-contained web component library for chat interfaces',
     svgIcons: Object.keys(SVG_ICONS),
