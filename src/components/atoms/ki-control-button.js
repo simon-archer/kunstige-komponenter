@@ -100,6 +100,11 @@ class KiControlButton extends HTMLElement {
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
         
+        button:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(255, 255, 255, 1), 0 0 0 6px rgba(0, 0, 255, 1);
+        }
+        
         button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
