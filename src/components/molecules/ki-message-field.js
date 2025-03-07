@@ -377,7 +377,7 @@ class KiMessageField extends HTMLElement {
           </div>
           <div class="toolbar">
             <div class="left-tools">
-              <ki-button class="attachment-button" variant="tertiary" icon-only="File" size="small" title="Attach file"></ki-button>
+              <ki-button class="attachment-button" type="tertiary" icon-only="File" size="small" title="Attach file"></ki-button>
               <div class="attachments-container"></div>
             </div>
             <div class="right-tools">
