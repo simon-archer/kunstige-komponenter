@@ -1,0 +1,123 @@
+# Kunstige Komponenter Component Library
+
+A minimal web component library with zero dependencies. Import the bundle or individual components.
+
+## Basic Usage
+
+```html
+<!-- Import all components -->
+<script type="module" src="./bundle.js"></script>
+
+<!-- Or import specific components -->
+<script type="module" src="./src/components/atoms/ki-button.js"></script>
+```
+
+## Components
+
+### Atoms
+
+#### ki-icon
+SVG icon component with built-in icons.
+```html
+<ki-icon name="Search" size="medium"></ki-icon>
+<!-- sizes: small, medium, large -->
+<!-- icons: Arrow-Up, File, Globe, Loading, Placeholder, Search, Stop -->
+```
+
+#### ki-button
+Standard button with multiple variants.
+```html
+<ki-button type="primary" size="medium">Label</ki-button>
+<!-- types: primary, secondary, tertiary, outline, ghost, danger -->
+<!-- sizes: small, medium, large -->
+<!-- attributes: disabled, icon="IconName", icon-position="right" -->
+```
+
+#### ki-control-button
+Icon-only circular button.
+```html
+<ki-control-button icon="Search" size="medium"></ki-control-button>
+<!-- sizes: small, medium, large -->
+<!-- variants: default, primary, secondary, danger -->
+<!-- attributes: disabled -->
+```
+
+#### ki-card
+Container for content.
+```html
+<ki-card elevation="medium" padding="medium">Content</ki-card>
+<!-- elevations: none, small, medium, large -->
+<!-- paddings: none, small, medium, large -->
+<!-- attributes: bordered, interactive, full-width -->
+```
+
+#### ki-list
+Simple list component.
+```html
+<ki-list variant="default" spacing="medium">
+  <div>List item 1</div>
+  <div>List item 2</div>
+</ki-list>
+<!-- variants: default, divided, card -->
+<!-- spacings: small, medium, large -->
+<!-- attributes: bordered, hoverable -->
+```
+
+### Molecules
+
+#### ki-message-field
+Input field for sending messages.
+```html
+<ki-message-field placeholder="Type message..." attachments></ki-message-field>
+<!-- attributes: placeholder, attachments, max-height="150px" -->
+<!-- events: message-sent, message-canceled -->
+```
+
+#### ki-sidebar
+Toggleable sidebar component.
+```html
+<ki-sidebar position="left" toggle-icon="Globe" header header-text="Menu">
+  <div>Sidebar content</div>
+</ki-sidebar>
+<!-- positions: left, right -->
+<!-- attributes: width, toggle-icon, header, header-text -->
+<!-- events: sidebar-opened, sidebar-closed -->
+```
+
+### Organisms
+
+#### ki-header
+Page header component.
+```html
+<ki-header sticky>
+  <h1 slot="title">Page Title</h1>
+  <div slot="left">Left content</div>
+  <div slot="right">Right content</div>
+</ki-header>
+<!-- attributes: sticky, transparent, compact -->
+<!-- slots: left, title, center, right -->
+```
+
+#### ki-footer
+Page footer component.
+```html
+<ki-footer bordered>
+  <div slot="left">Left content</div>
+  <div slot="center">Center content</div>
+  <div slot="right">Right content</div>
+</ki-footer>
+<!-- attributes: sticky, compact, bordered -->
+<!-- slots: left, center, right -->
+```
+
+## Customization
+
+Set custom colors with CSS variables:
+```css
+:root {
+  --ki-primary: #3b82f6;
+  --ki-secondary: #6b7280;
+  --ki-border-radius: 8px;
+  --ki-focus-color: #4d90fe;
+}
+```
