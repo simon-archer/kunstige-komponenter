@@ -324,7 +324,6 @@ class KiMessageField extends HTMLElement {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
           }
           .attachment-button {
