@@ -56,62 +56,74 @@
     }
     
     .info {
-      background: #fffaed;
+      background: #e9f5ff;
       padding: 15px;
-      border-left: 4px solid #ffc107;
+      border-left: 4px solid #007bff;
       margin: 20px 0;
+    }
+    
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .icon-name {
+      margin-top: 8px;
+      font-size: 12px;
+      text-align: center;
     }
   </style>
   
-  <!-- Import all components with a single import statement -->
+  <!-- Import the bundle -->
   <script type="module">
-    import bundleInfo from 'https://cdn.jsdelivr.net/gh/yourusername/kunstige-komponenter@main/simple-bundle.js';
+    import KI_COMPONENTS from './bundle.js';
     
-    // Log bundle info when loaded
-    console.log(`Loaded ${bundleInfo.name} v${bundleInfo.version}`);
-    console.log(`Components: ${bundleInfo.components.join(', ')}`);
-    
-    // Display bundle info on the page when loaded
-    document.addEventListener('DOMContentLoaded', () => {
+    // When components are ready
+    KI_COMPONENTS.ready(() => {
+      console.log(`Loaded ${KI_COMPONENTS.name} v${KI_COMPONENTS.version}`);
+      console.log(`Components: ${KI_COMPONENTS.components.join(', ')}`);
+      console.log(`Available icons: ${KI_COMPONENTS.svgIcons.join(', ')}`);
+      
+      // Update the info section
       const infoElement = document.getElementById('bundle-info');
       if (infoElement) {
-        infoElement.textContent = `Successfully loaded ${bundleInfo.name} v${bundleInfo.version}`;
+        infoElement.textContent = `Successfully loaded ${KI_COMPONENTS.name} v${KI_COMPONENTS.version} with ${KI_COMPONENTS.svgIcons.length} built-in SVG icons`;
       }
-    });
-  </script>
-</head>
-<body>
-  <h1>Kunstige Komponenter Bundle Demo</h1>
-  <p>This page demonstrates using the component bundle to import all needed components with a single import.</p>
-  
-  <div class="info" id="bundle-info">Loading components...</div>
-  
-  <div class="demo-container">
-    <h2>Message Field Component</h2>
-    <p>Type a message and press Enter or click the send button:</p>
-    
-    <ki-message-field placeholder="Type your message here..."></ki-message-field>
-    <div class="output" id="message-output">Messages will appear here</div>
-  </div>
-  
-  <div class="demo-container">
-    <h2>How to Use</h2>
-    <p>To use this bundle in your own project:</p>
-    
-    <pre><code>&lt;!-- Import all components with a single import -->
-&lt;script type="module">
-  import bundleInfo from 'https://cdn.jsdelivr.net/gh/yourusername/kunstige-komponenter@main/simple-bundle.js';
-  console.log(`Loaded ${bundleInfo.name} v${bundleInfo.version}`);
-&lt;/script>
-
-&lt;!-- Then use any component -->
-&lt;ki-message-field placeholder="Type a message...">&lt;/ki-message-field></code></pre>
-    
-    <p><strong>Important:</strong> Replace <code>yourusername</code> with your actual GitHub username.</p>
-  </div>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
+      
+      // Create icon display
+      const iconsGrid = document.getElementById('icons-grid');
+      if (iconsGrid) {
+        KI_COMPONENTS.svgIcons.forEach(iconName => {
+          const iconItem = document.createElement('div');
+          iconItem.className = 'icon-item';
+          
+          const icon = document.createElement('ki-icon');
+          icon.setAttribute('name', iconName);
+          icon.setAttribute('size', 'large');
+          
+          const iconLabel = document.createElement('div');
+          iconLabel.className = 'icon-name';
+          iconLabel.textContent = iconName;
+          
+          iconItem.appendChild(icon);
+          iconItem.appendChild(iconLabel);
+          iconsGrid.appendChild(iconItem);
+        });
+      }
+      
+      // Set up message field events
       const messageField = document.querySelector('ki-message-field');
       const messageOutput = document.getElementById('message-output');
       
@@ -141,5 +153,57 @@
       }
     });
   </script>
+</head>
+<body>
+  <h1>Kunstige Komponenter Bundle</h1>
+  <p>This demo uses the improved bundle with reliable component loading</p>
+  
+  <div class="info" id="bundle-info">Loading components...</div>
+  
+  <div class="demo-container">
+    <h2>Message Field Component</h2>
+    <p>Type a message and press Enter or click the send button:</p>
+    
+    <ki-message-field placeholder="Type your message here..."></ki-message-field>
+    <div class="output" id="message-output">Messages will appear here</div>
+  </div>
+  
+  <div class="demo-container">
+    <h2>Included SVG Icons</h2>
+    <p>All SVG icons are included directly in the bundle - no server requests needed:</p>
+    
+    <div id="icons-grid" class="icons-grid">
+      <!-- Icons will be added here by JavaScript -->
+    </div>
+  </div>
+  
+  <div class="demo-container">
+    <h2>How to Use</h2>
+    <p>To use this bundle in your own project, simply import it:</p>
+    
+    <pre><code>&lt;!-- Import the bundle -->
+&lt;script type="module">
+  import KI_COMPONENTS from 'https://cdn.jsdelivr.net/gh/yourusername/kunstige-komponenter@main/bundle.js';
+  
+  // Wait for components to be ready before using them
+  KI_COMPONENTS.ready(() => {
+    console.log(`Loaded ${KI_COMPONENTS.name} v${KI_COMPONENTS.version}`);
+    console.log(`Available icons: ${KI_COMPONENTS.svgIcons.join(', ')}`);
+    
+    // Now all components are guaranteed to be defined and ready
+    const messageField = document.querySelector('ki-message-field');
+    if (messageField) {
+      messageField.addEventListener('message-sent', (e) => {
+        console.log('Message sent:', e.detail.value);
+      });
+    }
+  });
+&lt;/script>
+
+&lt;!-- Then use any component -->
+&lt;ki-message-field placeholder="Type a message...">&lt;/ki-message-field></code></pre>
+    
+    <p><strong>Important:</strong> Replace <code>yourusername</code> with your actual GitHub username.</p>
+  </div>
 </body>
 </html>
