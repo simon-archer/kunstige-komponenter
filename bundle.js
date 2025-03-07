@@ -1,9 +1,20 @@
 // bundle.js - Kunstige Komponenter
-// A complete bundle that dynamically discovers, loads and registers all components
+// Direct imports of all components with embedded SVG icons
 
-// Create a namespace to avoid global variable pollution
+// Import all components directly - no dynamic loading needed
+import './src/components/atoms/ki-icon.js';
+import './src/components/atoms/ki-button.js';
+import './src/components/atoms/ki-control-button.js';
+import './src/components/atoms/ki-card.js';
+import './src/components/atoms/ki-list.js';
+import './src/components/molecules/ki-message-field.js';
+import './src/components/molecules/ki-sidebar.js';
+import './src/components/organisms/ki-header.js';
+import './src/components/organisms/ki-footer.js';
+
+// Create a namespace for utilities and configuration 
 const KI_COMPONENTS = (function() {
-  // Define SVG icon map
+  // Define SVG icon map for offline use
   const SVG_ICONS = {
     'Arrow-Up': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M11.156 3.12081C11.6276 2.66806 12.3724 2.66806 12.844 3.12081L20.344 10.3208C20.8296 10.787 20.8453 11.5585 20.3792 12.044C19.913 12.5296 19.1415 12.5453 18.656 12.0792L13.2188 6.85945V19.5C13.2188 20.1731 12.6731 20.7188 12 20.7188C11.3269 20.7188 10.7812 20.1731 10.7812 19.5V6.85945L5.34402 12.0792C4.85846 12.5453 4.08695 12.5296 3.62081 12.044C3.15467 11.5585 3.17041 10.787 3.65598 10.3208L11.156 3.12081Z" fill="currentColor"/>
@@ -34,252 +45,20 @@ const KI_COMPONENTS = (function() {
     </svg>`
   };
 
-  // Component definitions that we'll extract from the source files
-  let componentDefinitions = {};
-  let componentsToRegister = [];
-  
-  // Base path for components
-  const basePath = '/src/components';
-  
-  // Component category paths for auto-discovery
-  const componentPaths = [
-    `${basePath}/atoms`,
-    `${basePath}/molecules`,
-    `${basePath}/organisms`
-  ];
-
-  // Dynamically discover all component paths
-  async function discoverComponents() {
-    const discoveredComponents = [];
-    
-    // For each component directory, fetch the files
-    for (const categoryPath of componentPaths) {
-      try {
-        // Use fetch to get directory listing
-        const response = await fetch(`${categoryPath}/`);
-        
-        if (!response.ok) {
-          console.warn(`Failed to load directory: ${categoryPath}`);
-          continue;
-        }
-        
-        // This may not work with all servers, but for demonstration
-        // In reality, you might need a server endpoint that returns directory listings
-        const html = await response.text();
-        
-        // Simple regex to extract JS files from directory listing
-        const fileRegex = /href="([^"]+\.js)"/g;
-        let match;
-        
-        while ((match = fileRegex.exec(html)) !== null) {
-          const fileName = match[1];
-          // Skip if not a ki- component
-          if (!fileName.startsWith('ki-')) continue;
-          
-          // Extract component name from filename
-          const componentName = fileName.replace('.js', '');
-          const componentPath = `${categoryPath}/${fileName}`;
-          
-          discoveredComponents.push({
-            name: componentName,
-            path: componentPath
-          });
-        }
-      } catch (error) {
-        console.error(`Error discovering components in ${categoryPath}:`, error);
-      }
-    }
-    
-    return discoveredComponents;
-  }
-  
-  // Alternative discovery method using a fixed list but with dynamic dependency resolution
-  async function getComponentList() {
-    // Start with basic known component list - this is a fallback if auto-discovery fails
-    return [
-      { name: 'ki-icon', path: `${basePath}/atoms/ki-icon.js` },
-      { name: 'ki-button', path: `${basePath}/atoms/ki-button.js` },
-      { name: 'ki-control-button', path: `${basePath}/atoms/ki-control-button.js` },
-      { name: 'ki-card', path: `${basePath}/atoms/ki-card.js` },
-      { name: 'ki-list', path: `${basePath}/atoms/ki-list.js` },
-      { name: 'ki-message-field', path: `${basePath}/molecules/ki-message-field.js` },
-      { name: 'ki-sidebar', path: `${basePath}/molecules/ki-sidebar.js` },
-      { name: 'ki-header', path: `${basePath}/organisms/ki-header.js` },
-      { name: 'ki-footer', path: `${basePath}/organisms/ki-footer.js` }
-    ];
-  }
-
-  // Dynamically fetch component source code
-  async function fetchComponentSource(componentInfo) {
-    try {
-      const response = await fetch(componentInfo.path);
-      if (!response.ok) {
-        throw new Error(`Failed to load component: ${componentInfo.name}`);
-      }
-      return await response.text();
-    } catch (error) {
-      console.error(`Error fetching ${componentInfo.name}:`, error);
-      return null;
-    }
-  }
-
-  // Parse component code to extract the class definition and dependencies
-  function extractComponentInfo(source, componentName) {
-    if (!source) return null;
-    
-    // Extract class definition
-    const className = componentName.replace('ki-', '').replace(/-(\w)/g, (_, c) => c.toUpperCase());
-    const classNamePattern = new RegExp(`class\\s+${className}\\s+extends\\s+HTMLElement\\s*{[\\s\\S]*?}\\s*customElements\\.define`);
-    const match = source.match(classNamePattern);
-    
-    if (!match) return null;
-    
-    const classDefinition = match[0].slice(0, -20); // Remove the customElements.define part
-    
-    // Extract dependencies (other ki- components used in the source)
-    const dependencyPattern = /<ki-[a-z-]+/g;
-    const dependencies = new Set();
-    let depMatch;
-    
-    while ((depMatch = dependencyPattern.exec(source)) !== null) {
-      const dependency = depMatch[0].slice(1); // Remove the leading <
-      if (dependency !== componentName) {
-        dependencies.add(dependency);
-      }
-    }
-    
-    return {
-      name: componentName,
-      classDefinition,
-      dependencies: Array.from(dependencies)
-    };
-  }
-
-  // Topologically sort components based on dependencies
-  function sortComponentsByDependency(componentsWithDeps) {
-    const result = [];
-    const visited = new Set();
-    const visiting = new Set();
-    
-    function visit(componentName) {
-      // Skip if already processed
-      if (visited.has(componentName)) return;
-      
-      // Detect circular dependencies
-      if (visiting.has(componentName)) {
-        console.warn(`Circular dependency detected involving ${componentName}`);
-        return;
-      }
-      
-      // Mark as being processed
-      visiting.add(componentName);
-      
-      // Find the component info
-      const component = componentsWithDeps.find(c => c.name === componentName);
-      
-      // If component exists and has dependencies, process them first
-      if (component && component.dependencies) {
-        for (const dependency of component.dependencies) {
-          visit(dependency);
-        }
-      }
-      
-      // Mark as processed and add to result
-      visiting.delete(componentName);
-      visited.add(componentName);
-      if (component) {
-        result.push(component);
-      }
-    }
-    
-    // Process all components
-    for (const component of componentsWithDeps) {
-      visit(component.name);
-    }
-    
-    return result;
-  }
-
-  // Load and register all components
-  async function loadComponents() {
-    try {
-      // Try auto-discovery first, fall back to fixed list
-      let discoveredComponents;
-      try {
-        discoveredComponents = await discoverComponents();
-        if (!discoveredComponents || discoveredComponents.length === 0) {
-          throw new Error('Auto-discovery failed');
-        }
-      } catch (error) {
-        console.warn('Falling back to fixed component list:', error);
-        discoveredComponents = await getComponentList();
-      }
-      
-      console.log(`Discovered ${discoveredComponents.length} components to load`);
-      
-      // Fetch each component's source
-      const componentsWithSource = await Promise.all(
-        discoveredComponents.map(async (comp) => ({
-          ...comp,
-          source: await fetchComponentSource(comp)
-        }))
-      );
-      
-      // Extract class definition and dependencies
-      const componentsWithDeps = componentsWithSource
-        .map(comp => {
-          const info = extractComponentInfo(comp.source, comp.name);
-          return info ? {
-            ...comp,
-            ...info
-          } : null;
-        })
-        .filter(Boolean); // Remove failed extractions
-      
-      // Sort by dependency
-      componentsToRegister = sortComponentsByDependency(componentsWithDeps);
-      
-      // Register components in the correct order
-      let isReady = true;
-      for (const component of componentsToRegister) {
-        if (!customElements.get(component.name)) {
-          try {
-            // Create a function from the class definition and immediately execute it
-            new Function(`
-              ${component.classDefinition}
-              customElements.define('${component.name}', ${component.name.replace('ki-', '').replace(/-(\w)/g, (_, c) => c.toUpperCase())});
-            `)();
-            console.log(`Component registered: ${component.name}`);
-          } catch (error) {
-            console.error(`Error registering ${component.name}:`, error);
-            isReady = false;
-          }
-        } else {
-          console.log(`Component already registered: ${component.name}`);
-        }
-      }
-      
-      return {
-        isReady,
-        components: componentsToRegister.map(c => c.name)
-      };
-    } catch (error) {
-      console.error('Error loading components:', error);
-      return { isReady: false, components: [] };
-    }
-  }
-
-  // Patch the icon loading mechanism to use local icons instead of fetching
+  // Override fetch to use our embedded SVG icons
   const originalFetch = window.fetch;
   window.fetch = function(url, options) {
     // Check if the request is for an SVG icon
-    if (typeof url === 'string' && url.includes('/src/assets/icons/') && url.endsWith('.svg')) {
+    if (typeof url === 'string' && 
+        (url.includes('/src/assets/icons/') || url.includes('./src/assets/icons/')) && 
+        url.endsWith('.svg')) {
       // Extract icon name from the URL
       const iconNameMatch = url.match(/\/([^\/]+)\.svg$/);
       if (iconNameMatch && iconNameMatch[1]) {
         const iconName = iconNameMatch[1];
         // Check if we have this icon in our embedded collection
         if (SVG_ICONS[iconName]) {
+          console.log(`Using embedded SVG icon: ${iconName}`);
           // Return a mock response with the embedded SVG
           return Promise.resolve({
             ok: true,
@@ -293,34 +72,43 @@ const KI_COMPONENTS = (function() {
     return originalFetch.apply(this, arguments);
   };
 
-  // Call loadComponents immediately
-  const loadPromise = loadComponents();
+  // Component list (for reference)
+  const componentsList = [
+    'ki-icon', 
+    'ki-button', 
+    'ki-control-button', 
+    'ki-card', 
+    'ki-list',
+    'ki-message-field', 
+    'ki-sidebar', 
+    'ki-header', 
+    'ki-footer'
+  ];
   
   // Return public API
   return {
     // Bundle info
     name: 'kunstige-komponenter',
-    version: '0.4.0',
-    description: 'A self-contained web component library with automatic discovery',
+    version: '0.5.0',
+    description: 'A simple web component library with direct imports',
     svgIcons: Object.keys(SVG_ICONS),
     
     // Ready state handling with component list
     ready: function(callback) {
-      loadPromise.then(({isReady, components}) => {
-        if (callback && typeof callback === 'function') {
-          callback({
-            isReady,
-            components
-          });
-        }
-      });
+      if (callback && typeof callback === 'function') {
+        // Components are already loaded via direct imports
+        callback({
+          isReady: true,
+          components: componentsList
+        });
+      }
     },
     
     // Get embedded SVG
     getSvgIcon: (name) => SVG_ICONS[name] || SVG_ICONS['Placeholder'],
     
-    // Get the list of components (returns a promise)
-    getComponents: () => loadPromise.then(({components}) => components)
+    // Get the list of components
+    getComponents: () => Promise.resolve(componentsList)
   };
 })();
 

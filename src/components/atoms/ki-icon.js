@@ -74,8 +74,23 @@ class KiIcon extends HTMLElement {
   async loadSvg(name) {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetch(`/src/assets/icons/${name}.svg`);
-        if (!response.ok) {
+        // Try both absolute and relative paths for compatibility
+        const paths = [
+          `./src/assets/icons/${name}.svg`,
+          `/src/assets/icons/${name}.svg`
+        ];
+        
+        let response = null;
+        for (const path of paths) {
+          try {
+            response = await fetch(path);
+            if (response.ok) break;
+          } catch (e) {
+            console.log(`Path ${path} failed, trying next...`);
+          }
+        }
+        
+        if (!response || !response.ok) {
           throw new Error(`Failed to load icon: ${name}`);
         }
         
@@ -97,7 +112,7 @@ class KiIcon extends HTMLElement {
           reject(new Error('Container not found'));
         }
       } catch (error) {
-        console.error(error);
+        console.error(`Error loading icon ${name}:`, error);
         reject(error);
       }
     });
