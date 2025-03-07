@@ -9,7 +9,7 @@ class KiButton extends HTMLElement {
   }
 
   render() {
-    const variant = this.getAttribute('variant') || 'primary';
+    const type = this.getAttribute('type') || 'primary';
     const size = this.getAttribute('size') || 'medium';
     const disabled = this.hasAttribute('disabled');
     const iconStart = this.getAttribute('icon-start');
@@ -110,7 +110,7 @@ class KiButton extends HTMLElement {
           }
         </style>
         <button 
-          class="${variant} ${size} ${iconOnly ? 'icon-only' : ''}"
+          class="${type} ${size} ${iconOnly ? 'icon-only' : ''}"
           ${disabled ? 'disabled' : ''}
         >
           ${iconStart ? `<span class="icon-start"><ki-icon name="${iconStart}" size="${size}"></ki-icon></span>` : ''}
@@ -134,7 +134,7 @@ class KiButton extends HTMLElement {
         bubbles: true,
         composed: true,
         detail: {
-          variant: this.getAttribute('variant') || 'primary',
+          type: this.getAttribute('type') || 'primary',
           size: this.getAttribute('size') || 'medium',
           event
         }
@@ -143,7 +143,7 @@ class KiButton extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['variant', 'size', 'disabled'];
+    return ['type', 'size', 'disabled'];
   }
 
   attributeChangedCallback() {
@@ -226,7 +226,7 @@ class KiToggleButton extends HTMLElement {
     const disabled = this.hasAttribute('disabled');
     const iconStart = this.getAttribute('icon-start');
     const iconEnd = this.getAttribute('icon-end');
-    const variant = this.toggled ? 'primary' : 'tertiary';
+    const type = this.toggled ? 'primary' : 'tertiary';
 
     if (this.shadowRoot) {
       // Save old button to avoid complete DOM replacement
@@ -323,7 +323,7 @@ class KiToggleButton extends HTMLElement {
         </style>
         
         <button 
-          class="${variant} ${size}"
+          class="${type} ${size}"
           ?disabled="${disabled}"
           aria-pressed="${this.toggled}"
         >
