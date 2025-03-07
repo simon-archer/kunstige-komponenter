@@ -6,10 +6,10 @@ A minimal web component library with zero dependencies. Import the bundle or ind
 
 ```html
 <!-- Import all components at once -->
-<script type="module" src="./bundle.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/simon-archer/kunstige-komponenter@main/bundle.js"></script>
 
 <!-- Or import specific components -->
-<script type="module" src="./src/components/atoms/ki-button.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/simon-archer/kunstige-komponenter@main/src/components/atoms/ki-button.js"></script>
 ```
 
 ## Components

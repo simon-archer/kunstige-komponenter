@@ -95,7 +95,7 @@ class KiSidebar extends HTMLElement {
         </style>
         
         <div class="sidebar-container">
-          <ki-card variant="rounded" elevation="low">
+          <ki-card variant="rounded" elevation="none">
             <div class="sidebar-content">
               <div class="sidebar-title">Components</div>
               <div class="components-container">

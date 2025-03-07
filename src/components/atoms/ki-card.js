@@ -66,7 +66,7 @@ class KiCard extends HTMLElement {
           
           .card:hover {
             box-shadow: ${this.elevation !== 'none' ? '0 0 5px rgba(0, 0, 0, 0.12)' : boxShadow};
-            background-color: rgba(252, 252, 252, 1);
+            background-color:${this.elevation !== 'none' ? 'rgba(252, 252, 252, 1)' : ''};
           }
         </style>
         <div class="card">
