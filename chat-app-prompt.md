@@ -2,98 +2,53 @@
 
 ## Task
 
-Create a clean, functional chat application UI using the Kunstige Komponenter web component library. The application should have:
-
-1. A header with the application name
-2. A sidebar with a list of conversation contacts
-3. A main chat area with message history
-4. A message input field for sending new messages
-
-## Design System Information
-
-Kunstige Komponenter is a minimal web component library using Custom Elements with zero dependencies. Here's the documentation for the components you'll need:
-
-```
-# Kunstige Komponenter Components
-
-## Basic Usage
-<script type="module" src="https://cdn.jsdelivr.net/gh/username/kunstige-komponenter@main/bundle.js"></script>
-
-## Components to Use
-
-### ki-header
-<ki-header sticky>
-  <h1 slot="title">App Title</h1>
-  <div slot="right">Right content</div>
-</ki-header>
-
-### ki-sidebar
-<ki-sidebar position="left" toggle-icon="Globe" header header-text="Contacts">
-  <div>Sidebar content</div>
-</ki-sidebar>
-
-### ki-list
-<ki-list hoverable>
-  <div>List item 1</div>
-  <div>List item 2</div>
-</ki-list>
-
-### ki-card
-<ki-card elevation="medium">Content</ki-card>
-
-### ki-message-field
-<ki-message-field placeholder="Type message..." attachments></ki-message-field>
-<!-- events: message-sent, message-canceled -->
-
-### ki-icon
-<ki-icon name="Search" size="medium"></ki-icon>
-<!-- available icons: Arrow-Up, File, Globe, Loading, Placeholder, Search, Stop -->
-
-### ki-button
-<ki-button type="primary" size="medium">Label</ki-button>
-<!-- types: primary, secondary, tertiary -->
-```
+Create a clean, modern chat application UI using the Kunstige Komponenter web component library. The implementation should demonstrate the capabilities of the component library while providing a functional chat interface.
 
 ## Requirements
 
-1. **Responsive Layout**: The chat UI should adapt from mobile to desktop screens.
-2. **Interactive Elements**:
-   - Clicking a contact in the sidebar should display that conversation
-   - Sending a message should add it to the current conversation
-   - The sidebar should be collapsible on mobile
+1. Build a chat application interface with:
+   - Header area
+   - Navigation/contacts sidebar
+   - Main conversation area
+   - Message input
 
-3. **Sample Data**:
-   - Include 3-5 sample contacts with names and simple avatars
-   - Pre-populate each conversation with 2-3 example messages
-   - Messages should show the sender name, message text, and timestamp
+2. Make the interface responsive for both desktop and mobile views
 
-4. **Styling**:
-   - Use CSS variables for consistent styling
-   - Conversations should visually indicate read/unread status
-   - Active conversation should be highlighted in the sidebar
+3. Implement basic interactivity:
+   - Sending and receiving messages
+   - Switching between conversations
+   - Mobile-friendly sidebar toggling
 
-## Technical Guidelines
+4. Include some sample data to demonstrate the UI
 
-1. **HTML Structure**:
-   - Use semantic HTML elements
-   - Implement proper accessibility attributes
-   - Keep the DOM structure clean and logical
+## Component Documentation
 
-2. **CSS**:
-   - Use a mobile-first approach
-   - Define custom properties for theming
-   - Example: `--ki-primary: #3b82f6;`
+The documentation for the Kunstige Komponenter library is available in the llms.txt file. This contains details about:
 
-3. **JavaScript**:
-   - Implement basic event handling
-   - Store conversation data in a simple array
-   - No need for backend integration or persistence
+- All available components
+- Their attributes and properties
+- Event handling
+- Styling options
 
-## Output Format
+Feel free to choose which components make the most sense for your implementation. For example, you might use ki-header, ki-sidebar, ki-message-field, and other components as needed.
 
-Please provide:
-1. Complete HTML file with embedded CSS and JavaScript
-2. Brief explanation of the implementation choices
-3. Any suggested improvements for a real-world version
+## Design Freedom
 
-The final result should be a single HTML file that runs in a modern browser with no dependencies other than the Kunstige Komponenter library.
+You have creative freedom regarding:
+
+- The overall layout and component selection
+- Color scheme (using CSS variables for theming)
+- Interaction patterns
+- Message styling and organization
+
+## Output Requirements
+
+Please deliver a single HTML file that:
+- Imports the Kunstige Komponenter bundle from a CDN
+- Contains all necessary HTML, CSS, and JavaScript
+- Works in modern browsers without additional dependencies
+- Demonstrates the key features of a chat interface
+
+## Getting Started
+
+Begin by reviewing the component documentation in llms.txt, then plan your implementation focusing on user experience and good design principles.
