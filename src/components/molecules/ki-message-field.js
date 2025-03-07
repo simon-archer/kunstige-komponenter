@@ -59,19 +59,45 @@ class KiMessageField extends HTMLElement {
     }
 
     if (button) {
-      button.addEventListener('click', () => {
-        if (this.state === 'send') {
-          this.handleSend();
-        } else if (this.state === 'loading') {
-          // Do nothing while loading
-        } else if (this.state === 'stop') {
-          this.handleStop();
+      // Handler for both events
+      const handleControlButtonChange = (e) => {
+        let newState;
+        
+        if (e.type === 'ki-control-state-change') {
+          newState = e.detail.state;
+        } else if (e.type === 'click') {
+          // Legacy click handling - manually cycle through states
+          const stateMap = {
+            'send': 'loading',
+            'loading': 'stop',
+            'stop': 'send'
+          };
+          newState = stateMap[this.state];
         }
-      });
+        
+        // The ki-control-button cycles: send -> loading -> stop -> send
+        if (newState === 'loading' && this.state === 'send') {
+          this.handleSend(); // Only trigger send when going from send to loading
+        } else if (newState === 'send' && this.state === 'stop') {
+          this.handleStop(); // Only trigger stop when going from stop to send
+        }
+        
+        // Update our internal state to match the button
+        this.state = newState;
+      };
+      
+      // Listen for both custom event and regular click for backward compatibility
+      button.addEventListener('ki-control-state-change', handleControlButtonChange);
+      button.addEventListener('click', handleControlButtonChange);
     }
 
     if (attachButton) {
-      attachButton.addEventListener('click', this.handleAttachmentClick.bind(this));
+      // Use ki-button-click event for the ki-button component
+      const boundHandleAttachmentClick = this.handleAttachmentClick.bind(this);
+      attachButton.addEventListener('ki-button-click', boundHandleAttachmentClick);
+      // For backwards compatibility, also listen to regular click events
+      attachButton.addEventListener('click', boundHandleAttachmentClick);
+      
       // Create hidden file input
       this.fileInput = document.createElement('input');
       this.fileInput.type = 'file';

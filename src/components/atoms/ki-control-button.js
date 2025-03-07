@@ -79,9 +79,10 @@ class KiControlButton extends HTMLElement {
           align-items: center;
           justify-content: center;
           aspect-ratio: 1 / 1;
-          width: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
-          height: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
+          width: ${size === 'small' ? '30px' : size === 'large' ? '42px' : '32px'};
+          height: ${size === 'small' ? '30px' : size === 'large' ? '42px' : '32px'};
           border: none;
+          padding: 2px;
           border-radius: var(--ki-border-radius, 9999px);
           cursor: pointer;
           background-color: var(--ki-primary, #000000);

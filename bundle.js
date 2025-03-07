@@ -1,5 +1,5 @@
-// bundle.js
-// A complete bundle with inline SVG icons and all components needed for ki-message-field
+// bundle.js - Kunstige Komponenter
+// A complete bundle that dynamically discovers, loads and registers all components
 
 // Create a namespace to avoid global variable pollution
 const KI_COMPONENTS = (function() {
@@ -34,819 +34,293 @@ const KI_COMPONENTS = (function() {
     </svg>`
   };
 
-  // Define the components
-  class KiIcon extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
+  // Component definitions that we'll extract from the source files
+  let componentDefinitions = {};
+  let componentsToRegister = [];
+  
+  // Base path for components
+  const basePath = '/src/components';
+  
+  // Component category paths for auto-discovery
+  const componentPaths = [
+    `${basePath}/atoms`,
+    `${basePath}/molecules`,
+    `${basePath}/organisms`
+  ];
+
+  // Dynamically discover all component paths
+  async function discoverComponents() {
+    const discoveredComponents = [];
     
-    static get observedAttributes() {
-      return ['name', 'size', 'color'];
-    }
-    
-    attributeChangedCallback() {
-      this.render();
-    }
-    
-    connectedCallback() {
-      this.render();
-    }
-    
-    get name() {
-      return this.getAttribute('name') || 'Placeholder';
-    }
-    
-    get size() {
-      return this.getAttribute('size') || 'medium';
-    }
-    
-    get color() {
-      return this.getAttribute('color') || 'currentColor';
-    }
-    
-    render() {
-      const sizeMap = {
-        'small': '16px',
-        'medium': '24px',
-        'large': '32px'
-      };
-      
-      const iconSize = sizeMap[this.size] || '24px';
-      const iconName = this.name;
-      const iconSvg = SVG_ICONS[iconName] || SVG_ICONS['Placeholder'];
-      const isLoading = iconName === 'Loading';
-      
-      this.shadowRoot.innerHTML = `
-        <style>
-          :host {
-            display: inline-block;
-            line-height: 0;
-          }
-          .icon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: ${iconSize};
-            height: ${iconSize};
-            color: ${this.color};
-          }
-          .icon-container svg {
-            width: 100%;
-            height: 100%;
-          }
-          
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          
-          .loading svg {
-            animation: spin 1.5s linear infinite;
-          }
-        </style>
-        <div class="icon-container ${isLoading ? 'loading' : ''}">
-          ${iconSvg}
-        </div>
-      `;
-    }
-  }
-
-  class KiButton extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
-
-    connectedCallback() {
-      this.render();
-      const button = this.shadowRoot.querySelector('button');
-      if (button) {
-        button.addEventListener('click', this.handleClick.bind(this));
-      }
-    }
-
-    handleClick(event) {
-      if (!this.hasAttribute('disabled')) {
-        this.dispatchEvent(new CustomEvent('ki-button-click', {
-          bubbles: true,
-          composed: true,
-          detail: { event }
-        }));
-      }
-    }
-
-    static get observedAttributes() {
-      return ['variant', 'size', 'disabled', 'icon-start', 'icon-end', 'icon-only'];
-    }
-
-    attributeChangedCallback() {
-      this.render();
-    }
-
-    render() {
-      const variant = this.getAttribute('variant') || 'primary';
-      const size = this.getAttribute('size') || 'medium';
-      const disabled = this.hasAttribute('disabled');
-      const iconStart = this.getAttribute('icon-start');
-      const iconEnd = this.getAttribute('icon-end');
-      const iconOnly = this.getAttribute('icon-only');
-      
-      this.shadowRoot.innerHTML = `
-        <style>
-          :host {
-            display: inline-block;
-          }
-          button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            border: none;
-            border-radius: var(--ki-border-radius, 9999px);
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-            position: relative;
-          }
-          button:hover:not(:disabled) {
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-          }
-          button:active:not(:disabled) {
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-          }
-          button:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 1), 0 0 0 6px rgba(0, 0, 255, 1);
-          }
-          button.primary {
-            background-color: var(--ki-primary, #000000);
-            color: white;
-          }
-          button.primary:hover:not(:disabled) {
-            background-color: #333333;
-          }
-          button.primary:active:not(:disabled) {
-            background-color: #444444;
-          }
-          button.secondary {
-            background-color: var(--ki-secondary, #6c757d);
-            color: white;
-          }
-          button.secondary:hover:not(:disabled) {
-            background-color: #5a6268;
-          }
-          button.secondary:active:not(:disabled) {
-            background-color: #4e555b;
-          }
-          button.tertiary {
-            background-color: #ffffff;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-            border: 1px solid #e0e6ed;
-            color: var(--ki-primary, #000000);
-          }
-          button.tertiary:hover:not(:disabled) {
-            background-color: #f8fafc;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-            border-color: #c9d4df;
-          }
-          button.tertiary:active:not(:disabled) {
-            background-color: #f0f4f8;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-          }
-          button.small {
-            padding: 5px 10px;
-            font-size: 12px;
-          }
-          button.large {
-            padding: 15px 30px;
-            font-size: 20px;
-          }
-          button.icon-only {
-            padding: ${size === 'small' ? '6px' : size === 'large' ? '16px' : '10px'};
-            aspect-ratio: 1 / 1;
-          }
-          button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-          .icon-start {
-            margin-right: 8px;
-            display: inline-flex;
-          }
-          .icon-end {
-            margin-left: 8px;
-            display: inline-flex;
-          }
-        </style>
-        <button 
-          class="${variant} ${size} ${iconOnly ? 'icon-only' : ''}"
-          ${disabled ? 'disabled' : ''}
-        >
-          ${iconStart ? `<span class="icon-start"><ki-icon name="${iconStart}" size="${size}"></ki-icon></span>` : ''}
-          ${!iconOnly ? '<slot></slot>' : ''}
-          ${iconOnly ? `<ki-icon name="${iconOnly}" size="${size}"></ki-icon>` : ''}
-          ${iconEnd ? `<span class="icon-end"><ki-icon name="${iconEnd}" size="${size}"></ki-icon></span>` : ''}
-        </button>
-      `;
-    }
-  }
-
-  class KiControlButton extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      this._state = 'send'; // Initial state: 'send', 'loading', or 'stop'
-      this.boundHandleClick = this.handleClick.bind(this);
-    }
-
-    connectedCallback() {
-      this.render();
-      this.addEventListeners();
-    }
-
-    static get observedAttributes() {
-      return ['state', 'size', 'disabled'];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (oldValue !== newValue) {
-        this.render();
-        this.addEventListeners();
-      }
-    }
-
-    get state() {
-      return this._state;
-    }
-
-    set state(newState) {
-      if (['send', 'loading', 'stop'].includes(newState) && newState !== this._state) {
-        this._state = newState;
-        this.render();
-      }
-    }
-
-    addEventListeners() {
-      if (this.buttonElement) {
-        this.buttonElement.removeEventListener('click', this.boundHandleClick);
-      }
-      
-      this.buttonElement = this.shadowRoot.querySelector('button');
-      if (this.buttonElement) {
-        this.buttonElement.addEventListener('click', this.boundHandleClick);
-      }
-    }
-
-    handleClick(event) {
-      if (!this.hasAttribute('disabled')) {
-        const stateMap = {
-          'send': 'loading',
-          'loading': 'stop',
-          'stop': 'send'
-        };
+    // For each component directory, fetch the files
+    for (const categoryPath of componentPaths) {
+      try {
+        // Use fetch to get directory listing
+        const response = await fetch(`${categoryPath}/`);
         
-        this.state = stateMap[this.state];
-        
-        this.dispatchEvent(new CustomEvent('ki-control-state-change', {
-          bubbles: true,
-          composed: true,
-          detail: {
-            state: this.state,
-            event
-          }
-        }));
-      }
-    }
-
-    render() {
-      const size = this.getAttribute('size') || 'medium';
-      const disabled = this.hasAttribute('disabled');
-      
-      // Map states to icons
-      const stateIcons = {
-        'send': 'Arrow-Up',
-        'loading': 'Loading',
-        'stop': 'Stop'
-      };
-      
-      // Determine current icon
-      const currentIcon = stateIcons[this.state];
-
-      if (this.shadowRoot) {
-        // Save old button to avoid complete DOM replacement
-        const oldButton = this.shadowRoot.querySelector('button');
-        const wasToggled = oldButton ? oldButton.classList.contains('primary') : false;
-        
-        this.shadowRoot.innerHTML = `
-          <style>
-            :host {
-              display: inline-block;
-              margin: 2px;
-            }
-            
-            button {
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              aspect-ratio: 1 / 1;
-              width: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
-              height: ${size === 'small' ? '28px' : size === 'large' ? '42px' : '32px'};
-              padding: 0;
-              border: none;
-              border-radius: var(--ki-border-radius, 9999px);
-              cursor: pointer;
-              background-color: var(--ki-primary, #000000);
-              color: white;
-              transition: box-shadow 0.3s ease;
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-              position: relative;
-            }
-            
-            button:hover:not(:disabled) {
-              box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-            }
-            
-            button:active:not(:disabled) {
-              box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-            }
-            
-            button:disabled {
-              opacity: 0.5;
-              cursor: not-allowed;
-            }
-            
-            .button-icon {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-            
-            /* All icons are white */
-            ki-icon {
-              color: white;
-            }
-          </style>
-          
-          <button 
-            class="${this.state}-state ${size}"
-            ${disabled ? 'disabled' : ''}
-            aria-label="${this.state} button"
-          >
-            <div class="button-icon">
-              <ki-icon name="${currentIcon}" size="${size}"></ki-icon>
-            </div>
-          </button>
-        `;
-      }
-    }
-  }
-
-  class KiMessageField extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      this.value = '';
-      this.state = 'send';
-      this.attachments = [];
-    }
-
-    static get observedAttributes() {
-      return ['placeholder'];
-    }
-
-    get placeholder() {
-      return this.getAttribute('placeholder') || 'Type a message...';
-    }
-
-    connectedCallback() {
-      this.render();
-      this.addEventListeners();
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (oldValue !== newValue) {
-        this.render();
-      }
-    }
-
-    addEventListeners() {
-      const textarea = this.shadowRoot.querySelector('textarea');
-      const button = this.shadowRoot.querySelector('.right-tools ki-control-button');
-      const attachButton = this.shadowRoot.querySelector('.attachment-button');
-      
-      // Add click listener to textarea container to help with scrolling
-      const inputArea = this.shadowRoot.querySelector('.input-area');
-      if (inputArea) {
-        inputArea.addEventListener('click', () => {
-          if (textarea) textarea.focus();
-        });
-      }
-
-      if (textarea) {
-        textarea.addEventListener('input', (e) => {
-          this.value = e.target.value;
-          this.adjustTextareaHeight(textarea);
-        });
-        
-        textarea.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            if (this.state === 'send') {
-              this.handleSend();
-            }
-          }
-        });
-        
-        // Initial height adjustment
-        this.adjustTextareaHeight(textarea);
-      }
-
-      if (button) {
-        button.addEventListener('click', () => {
-          if (this.state === 'send') {
-            this.handleSend();
-          } else if (this.state === 'loading') {
-            // Do nothing while loading
-          } else if (this.state === 'stop') {
-            this.handleStop();
-          }
-        });
-      }
-
-      if (attachButton) {
-        attachButton.addEventListener('click', this.handleAttachmentClick.bind(this));
-        // Create hidden file input
-        this.fileInput = document.createElement('input');
-        this.fileInput.type = 'file';
-        this.fileInput.multiple = true;
-        this.fileInput.style.display = 'none';
-        this.fileInput.accept = '.pdf,.txt,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png';
-        this.shadowRoot.appendChild(this.fileInput);
-        
-        this.fileInput.addEventListener('change', this.handleFileSelect.bind(this));
-      }
-    }
-    
-    adjustTextareaHeight(textarea) {
-      // Store current scroll position
-      const scrollTop = textarea.scrollTop;
-      
-      // Reset height to auto to measure the scrollHeight properly
-      textarea.style.height = 'auto';
-      
-      // Get content height
-      const contentHeight = textarea.scrollHeight;
-      
-      // Calculate new height within limits
-      const maxHeight = 150;
-      const minHeight = 36;
-      const newHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
-      
-      // Apply the new height
-      textarea.style.height = `${newHeight}px`;
-      
-      // Restore scroll position
-      textarea.scrollTop = scrollTop;
-      
-      // Add scrolling class if needed for border radius change
-      const container = this.shadowRoot.querySelector('.message-container');
-      if (container) {
-        if (contentHeight > maxHeight) {
-          container.classList.add('scrolling');
-          
-          // Add additional padding for scrollbar
-          textarea.style.paddingRight = '18px'; 
-        } else {
-          container.classList.remove('scrolling');
-          textarea.style.paddingRight = '14px';
+        if (!response.ok) {
+          console.warn(`Failed to load directory: ${categoryPath}`);
+          continue;
         }
-      }
-    }
-    
-    handleAttachmentClick() {
-      // Trigger file input click
-      this.fileInput.click();
-    }
-    
-    handleFileSelect(event) {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-      
-      // Process the selected files
-      Array.from(files).forEach(file => {
-        this.attachments.push(file);
-      });
-      
-      // Update attachments display
-      this.updateAttachmentsDisplay();
-      
-      // Clear the file input value so the same file can be selected again
-      this.fileInput.value = '';
-    }
-    
-    updateAttachmentsDisplay() {
-      const container = this.shadowRoot.querySelector('.attachments-container');
-      if (!container) return;
-      
-      // Clear previous attachments
-      container.innerHTML = '';
-      
-      if (this.attachments.length > 0) {
-        container.style.display = 'flex';
         
-        // Create attachment chips
-        this.attachments.forEach((file, index) => {
-          const chip = document.createElement('div');
-          chip.className = 'attachment-chip';
-          chip.style.display = 'flex';
-          chip.style.alignItems = 'center';
-          chip.style.backgroundColor = '#f0f0f0';
-          chip.style.borderRadius = '16px';
-          chip.style.padding = '4px 8px';
-          chip.style.margin = '2px';
-          chip.style.fontSize = '12px';
+        // This may not work with all servers, but for demonstration
+        // In reality, you might need a server endpoint that returns directory listings
+        const html = await response.text();
+        
+        // Simple regex to extract JS files from directory listing
+        const fileRegex = /href="([^"]+\.js)"/g;
+        let match;
+        
+        while ((match = fileRegex.exec(html)) !== null) {
+          const fileName = match[1];
+          // Skip if not a ki- component
+          if (!fileName.startsWith('ki-')) continue;
           
-          const name = document.createElement('span');
-          name.textContent = file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name;
-          name.style.marginRight = '4px';
+          // Extract component name from filename
+          const componentName = fileName.replace('.js', '');
+          const componentPath = `${categoryPath}/${fileName}`;
           
-          const removeBtn = document.createElement('span');
-          removeBtn.textContent = '×';
-          removeBtn.style.cursor = 'pointer';
-          removeBtn.style.fontWeight = 'bold';
-          
-          removeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.attachments.splice(index, 1);
-            this.updateAttachmentsDisplay();
+          discoveredComponents.push({
+            name: componentName,
+            path: componentPath
           });
-          
-          chip.appendChild(name);
-          chip.appendChild(removeBtn);
-          container.appendChild(chip);
-        });
-      } else {
-        container.style.display = 'none';
-      }
-    }
-
-    handleSend() {
-      if (!this.value.trim() && this.attachments.length === 0) return;
-
-      this.state = 'loading';
-      this.updateButtonState();
-
-      // Simulate sending message with attachments
-      setTimeout(() => {
-        this.dispatchEvent(new CustomEvent('message-sent', {
-          bubbles: true,
-          composed: true,
-          detail: { 
-            value: this.value,
-            attachments: this.attachments 
-          }
-        }));
-        
-        // Reset to send state
-        this.value = '';
-        const textarea = this.shadowRoot.querySelector('textarea');
-        if (textarea) {
-          textarea.value = '';
-          this.adjustTextareaHeight(textarea);
         }
-        
-        // Clear attachments
-        this.attachments = [];
-        this.updateAttachmentsDisplay();
-        
-        this.state = 'send';
-        this.updateButtonState();
-      }, 300);
-    }
-
-    handleStop() {
-      this.state = 'send';
-      this.updateButtonState();
-      this.dispatchEvent(new CustomEvent('message-canceled', {
-        bubbles: true,
-        composed: true
-      }));
-    }
-
-    updateButtonState() {
-      const button = this.shadowRoot.querySelector('ki-control-button');
-      if (button) {
-        button.state = this.state;
+      } catch (error) {
+        console.error(`Error discovering components in ${categoryPath}:`, error);
       }
     }
+    
+    return discoveredComponents;
+  }
+  
+  // Alternative discovery method using a fixed list but with dynamic dependency resolution
+  async function getComponentList() {
+    // Start with basic known component list - this is a fallback if auto-discovery fails
+    return [
+      { name: 'ki-icon', path: `${basePath}/atoms/ki-icon.js` },
+      { name: 'ki-button', path: `${basePath}/atoms/ki-button.js` },
+      { name: 'ki-control-button', path: `${basePath}/atoms/ki-control-button.js` },
+      { name: 'ki-card', path: `${basePath}/atoms/ki-card.js` },
+      { name: 'ki-list', path: `${basePath}/atoms/ki-list.js` },
+      { name: 'ki-message-field', path: `${basePath}/molecules/ki-message-field.js` },
+      { name: 'ki-sidebar', path: `${basePath}/molecules/ki-sidebar.js` },
+      { name: 'ki-header', path: `${basePath}/organisms/ki-header.js` },
+      { name: 'ki-footer', path: `${basePath}/organisms/ki-footer.js` }
+    ];
+  }
 
-    render() {
-      if (this.shadowRoot) {
-        this.shadowRoot.innerHTML = `
-          <style>
-            :host {
-              display: block;
-              width: 100%;
-              font-size: 14px;
-            }
-            
-            .message-container {
-              display: flex;
-              flex-direction: column;
-              position: relative;
-              border-radius: 24px;
-              border: 1px solid #ddd;
-              background-color: #fff;
-              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-              overflow: hidden;
-              transition: border-radius 0.2s ease;
-              max-width: 100%;
-            }
-            
-            .message-container.scrolling {
-              border-radius: 16px;
-            }
-            
-            .input-area {
-              display: flex;
-              padding: 0;
-            }
-            
-            textarea {
-              width: 100%;
-              min-height: 36px;
-              max-height: 150px;
-              padding: 12px 14px;
-              font-size: 15px;
-              border: none;
-              background: none;
-              color: #333;
-              outline: none;
-              line-height: 1.4;
-              margin: 0;
-              resize: none;
-              overflow-y: scroll;
-              overflow-x: hidden;
-              box-sizing: border-box;
-              font-family: inherit;
-              transition: height 0.15s ease;
-              scrollbar-width: thin;
-              scrollbar-color: #ccc rgba(0,0,0,0.02);
-            }
-            
-            textarea::placeholder {
-              color: #999;
-              opacity: 0.8;
-            }
-            
-            textarea::-webkit-scrollbar {
-              width: 8px;
-            }
-            
-            textarea::-webkit-scrollbar-track {
-              background: rgba(0,0,0,0.02);
-            }
-            
-            textarea::-webkit-scrollbar-thumb {
-              background-color: #ccc;
-              border-radius: 8px;
-              border: 2px solid transparent;
-              background-clip: padding-box;
-            }
-            
-            textarea::-webkit-scrollbar-thumb:hover {
-              background-color: #aaa;
-            }
-            
-            .toolbar {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 6px 12px;
-              border-top: 1px solid rgba(0, 0, 0, 0.05);
-            }
-            
-            .left-tools {
-              display: flex;
-              align-items: center;
-            }
-            
-            .right-tools {
-              display: flex;
-              align-items: center;
-            }
-            
-            .attachment-button {
-              width: 32px;
-              height: 32px;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              background: none;
-              border: none;
-              cursor: pointer;
-              color: #666;
-              transition: background-color 0.2s;
-            }
-            
-            .attachment-button:hover {
-              background-color: rgba(0, 0, 0, 0.05);
-              color: #333;
-            }
-            
-            .attachments-container {
-              display: flex;
-              flex-wrap: wrap;
-              margin-left: 8px;
-            }
-            
-            ki-control-button {
-              margin: 0;
-              padding: 0;
-            }
-          </style>
-          
-          <div class="message-container">
-            <div class="input-area">
-              <textarea 
-                placeholder="${this.placeholder}"
-                rows="1"
-              ></textarea>
-            </div>
-            <div class="toolbar">
-              <div class="left-tools">
-                <button class="attachment-button" type="button" title="Attach file">
-                  <ki-icon name="File" size="medium"></ki-icon>
-                </button>
-                <div class="attachments-container"></div>
-              </div>
-              <div class="right-tools">
-                <ki-control-button state="${this.state}" size="medium"></ki-control-button>
-              </div>
-            </div>
-          </div>
-        `;
+  // Dynamically fetch component source code
+  async function fetchComponentSource(componentInfo) {
+    try {
+      const response = await fetch(componentInfo.path);
+      if (!response.ok) {
+        throw new Error(`Failed to load component: ${componentInfo.name}`);
       }
+      return await response.text();
+    } catch (error) {
+      console.error(`Error fetching ${componentInfo.name}:`, error);
+      return null;
     }
   }
 
-  // Store ready state
-  let isReady = false;
-  const readyCallbacks = [];
+  // Parse component code to extract the class definition and dependencies
+  function extractComponentInfo(source, componentName) {
+    if (!source) return null;
+    
+    // Extract class definition
+    const className = componentName.replace('ki-', '').replace(/-(\w)/g, (_, c) => c.toUpperCase());
+    const classNamePattern = new RegExp(`class\\s+${className}\\s+extends\\s+HTMLElement\\s*{[\\s\\S]*?}\\s*customElements\\.define`);
+    const match = source.match(classNamePattern);
+    
+    if (!match) return null;
+    
+    const classDefinition = match[0].slice(0, -20); // Remove the customElements.define part
+    
+    // Extract dependencies (other ki- components used in the source)
+    const dependencyPattern = /<ki-[a-z-]+/g;
+    const dependencies = new Set();
+    let depMatch;
+    
+    while ((depMatch = dependencyPattern.exec(source)) !== null) {
+      const dependency = depMatch[0].slice(1); // Remove the leading <
+      if (dependency !== componentName) {
+        dependencies.add(dependency);
+      }
+    }
+    
+    return {
+      name: componentName,
+      classDefinition,
+      dependencies: Array.from(dependencies)
+    };
+  }
 
-  // Function to register custom elements in specific order
-  function registerComponents() {
-    if (!customElements.get('ki-icon')) {
-      customElements.define('ki-icon', KiIcon);
+  // Topologically sort components based on dependencies
+  function sortComponentsByDependency(componentsWithDeps) {
+    const result = [];
+    const visited = new Set();
+    const visiting = new Set();
+    
+    function visit(componentName) {
+      // Skip if already processed
+      if (visited.has(componentName)) return;
+      
+      // Detect circular dependencies
+      if (visiting.has(componentName)) {
+        console.warn(`Circular dependency detected involving ${componentName}`);
+        return;
+      }
+      
+      // Mark as being processed
+      visiting.add(componentName);
+      
+      // Find the component info
+      const component = componentsWithDeps.find(c => c.name === componentName);
+      
+      // If component exists and has dependencies, process them first
+      if (component && component.dependencies) {
+        for (const dependency of component.dependencies) {
+          visit(dependency);
+        }
+      }
+      
+      // Mark as processed and add to result
+      visiting.delete(componentName);
+      visited.add(componentName);
+      if (component) {
+        result.push(component);
+      }
     }
     
-    if (!customElements.get('ki-button')) {
-      customElements.define('ki-button', KiButton);
+    // Process all components
+    for (const component of componentsWithDeps) {
+      visit(component.name);
     }
     
-    if (!customElements.get('ki-control-button')) {
-      customElements.define('ki-control-button', KiControlButton);
-    }
-    
-    if (!customElements.get('ki-message-field')) {
-      customElements.define('ki-message-field', KiMessageField);
-    }
-    
-    // Set ready state
-    isReady = true;
-    
-    // Execute any queued callbacks
-    while (readyCallbacks.length > 0) {
-      readyCallbacks.shift()();
+    return result;
+  }
+
+  // Load and register all components
+  async function loadComponents() {
+    try {
+      // Try auto-discovery first, fall back to fixed list
+      let discoveredComponents;
+      try {
+        discoveredComponents = await discoverComponents();
+        if (!discoveredComponents || discoveredComponents.length === 0) {
+          throw new Error('Auto-discovery failed');
+        }
+      } catch (error) {
+        console.warn('Falling back to fixed component list:', error);
+        discoveredComponents = await getComponentList();
+      }
+      
+      console.log(`Discovered ${discoveredComponents.length} components to load`);
+      
+      // Fetch each component's source
+      const componentsWithSource = await Promise.all(
+        discoveredComponents.map(async (comp) => ({
+          ...comp,
+          source: await fetchComponentSource(comp)
+        }))
+      );
+      
+      // Extract class definition and dependencies
+      const componentsWithDeps = componentsWithSource
+        .map(comp => {
+          const info = extractComponentInfo(comp.source, comp.name);
+          return info ? {
+            ...comp,
+            ...info
+          } : null;
+        })
+        .filter(Boolean); // Remove failed extractions
+      
+      // Sort by dependency
+      componentsToRegister = sortComponentsByDependency(componentsWithDeps);
+      
+      // Register components in the correct order
+      let isReady = true;
+      for (const component of componentsToRegister) {
+        if (!customElements.get(component.name)) {
+          try {
+            // Create a function from the class definition and immediately execute it
+            new Function(`
+              ${component.classDefinition}
+              customElements.define('${component.name}', ${component.name.replace('ki-', '').replace(/-(\w)/g, (_, c) => c.toUpperCase())});
+            `)();
+            console.log(`Component registered: ${component.name}`);
+          } catch (error) {
+            console.error(`Error registering ${component.name}:`, error);
+            isReady = false;
+          }
+        } else {
+          console.log(`Component already registered: ${component.name}`);
+        }
+      }
+      
+      return {
+        isReady,
+        components: componentsToRegister.map(c => c.name)
+      };
+    } catch (error) {
+      console.error('Error loading components:', error);
+      return { isReady: false, components: [] };
     }
   }
 
-  // Register components immediately
-  registerComponents();
+  // Patch the icon loading mechanism to use local icons instead of fetching
+  const originalFetch = window.fetch;
+  window.fetch = function(url, options) {
+    // Check if the request is for an SVG icon
+    if (typeof url === 'string' && url.includes('/src/assets/icons/') && url.endsWith('.svg')) {
+      // Extract icon name from the URL
+      const iconNameMatch = url.match(/\/([^\/]+)\.svg$/);
+      if (iconNameMatch && iconNameMatch[1]) {
+        const iconName = iconNameMatch[1];
+        // Check if we have this icon in our embedded collection
+        if (SVG_ICONS[iconName]) {
+          // Return a mock response with the embedded SVG
+          return Promise.resolve({
+            ok: true,
+            text: () => Promise.resolve(SVG_ICONS[iconName])
+          });
+        }
+      }
+    }
+    
+    // For all other requests, use the original fetch
+    return originalFetch.apply(this, arguments);
+  };
 
-  // Public API
+  // Call loadComponents immediately
+  const loadPromise = loadComponents();
+  
+  // Return public API
   return {
     // Bundle info
     name: 'kunstige-komponenter',
-    version: '0.1.1',
-    components: ['ki-icon', 'ki-button', 'ki-control-button', 'ki-message-field'],
-    description: 'A completely self-contained web component library for chat interfaces',
+    version: '0.4.0',
+    description: 'A self-contained web component library with automatic discovery',
     svgIcons: Object.keys(SVG_ICONS),
     
-    // Ready state handling
+    // Ready state handling with component list
     ready: function(callback) {
-      if (isReady) {
-        callback();
-      } else {
-        readyCallbacks.push(callback);
-      }
+      loadPromise.then(({isReady, components}) => {
+        if (callback && typeof callback === 'function') {
+          callback({
+            isReady,
+            components
+          });
+        }
+      });
     },
     
-    // Force reregister if needed (not normally needed)
-    reregister: registerComponents
+    // Get embedded SVG
+    getSvgIcon: (name) => SVG_ICONS[name] || SVG_ICONS['Placeholder'],
+    
+    // Get the list of components (returns a promise)
+    getComponents: () => loadPromise.then(({components}) => components)
   };
 })();
 

@@ -84,56 +84,137 @@
       font-size: 12px;
       text-align: center;
     }
+
+    .components-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .component-badge {
+      background: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .loading {
+      opacity: 0.6;
+    }
+
+    .loading:after {
+      content: "...";
+      animation: dots 1.5s steps(5, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { content: "."; }
+      40% { content: ".."; }
+      60%, 100% { content: "..."; }
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-left: 8px;
+    }
+
+    .status-badge.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .status-badge.warning {
+      background-color: #fff3cd;
+      color: #856404;
+    }
   </style>
   
-  <!-- Import the enhanced bundle with inline SVGs -->
+  <!-- Import the enhanced bundle with automatic component discovery -->
   <script type="module">
-    import bundleInfo from './enhanced-bundle.js';
+    import KiComponents from './bundle.js';
     
-    // Log bundle info when loaded
-    console.log(`Loaded ${bundleInfo.name} v${bundleInfo.version}`);
-    console.log(`Components: ${bundleInfo.components.join(', ')}`);
-    console.log(`Available icons: ${bundleInfo.svgIcons.join(', ')}`);
-    
-    // Display bundle info on the page when loaded
+    // Wait for components to be ready and then update the UI
     document.addEventListener('DOMContentLoaded', () => {
       const infoElement = document.getElementById('bundle-info');
-      if (infoElement) {
-        infoElement.textContent = `Successfully loaded ${bundleInfo.name} v${bundleInfo.version} with ${bundleInfo.svgIcons.length} built-in SVG icons`;
-      }
-      
-      // Create icon display
+      const componentsList = document.getElementById('components-list');
       const iconsGrid = document.getElementById('icons-grid');
-      if (iconsGrid) {
-        bundleInfo.svgIcons.forEach(iconName => {
-          const iconItem = document.createElement('div');
-          iconItem.className = 'icon-item';
-          
-          const icon = document.createElement('ki-icon');
-          icon.setAttribute('name', iconName);
-          icon.setAttribute('size', 'large');
-          
-          const iconLabel = document.createElement('div');
-          iconLabel.className = 'icon-name';
-          iconLabel.textContent = iconName;
-          
-          iconItem.appendChild(icon);
-          iconItem.appendChild(iconLabel);
-          iconsGrid.appendChild(iconItem);
-        });
+      const loadingStatus = document.getElementById('loading-status');
+      
+      if (infoElement) {
+        infoElement.classList.add('loading');
+        infoElement.textContent = 'Discovering and loading components';
       }
+
+      KiComponents.ready(({ isReady, components }) => {
+        if (infoElement) {
+          infoElement.classList.remove('loading');
+          infoElement.textContent = `Successfully loaded ${KiComponents.name} v${KiComponents.version}`;
+          
+          const statusBadge = document.createElement('span');
+          statusBadge.className = `status-badge ${isReady ? 'success' : 'warning'}`;
+          statusBadge.textContent = isReady ? 'All components loaded' : 'Some components failed to load';
+          infoElement.appendChild(statusBadge);
+        }
+
+        if (loadingStatus) {
+          loadingStatus.style.display = 'none';
+        }
+        
+        // Update components list
+        if (componentsList) {
+          componentsList.innerHTML = '';
+          components.forEach(component => {
+            const badge = document.createElement('div');
+            badge.className = 'component-badge';
+            badge.textContent = component;
+            componentsList.appendChild(badge);
+          });
+        }
+        
+        // Create icon display
+        if (iconsGrid) {
+          KiComponents.svgIcons.forEach(iconName => {
+            const iconItem = document.createElement('div');
+            iconItem.className = 'icon-item';
+            
+            const icon = document.createElement('ki-icon');
+            icon.setAttribute('name', iconName);
+            icon.setAttribute('size', 'large');
+            
+            const iconLabel = document.createElement('div');
+            iconLabel.className = 'icon-name';
+            iconLabel.textContent = iconName;
+            
+            iconItem.appendChild(icon);
+            iconItem.appendChild(iconLabel);
+            iconsGrid.appendChild(iconItem);
+          });
+        }
+      });
     });
   </script>
 </head>
 <body>
   <h1>Kunstige Komponenter Enhanced Bundle</h1>
-  <p>This demo uses the enhanced bundle with inline SVG icons - no external files needed!</p>
+  <p>This demo uses the enhanced auto-discovery bundle - all components are discovered and loaded automatically with their dependencies!</p>
   
-  <div class="info" id="bundle-info">Loading components...</div>
+  <div class="info" id="bundle-info">Initializing component discovery...</div>
+  
+  <div class="demo-container">
+    <h2>Discovered Components</h2>
+    <p>These components were automatically discovered, analyzed for dependencies, and loaded in the correct order:</p>
+    <div id="loading-status" class="loading">Analyzing component dependencies</div>
+    <div id="components-list" class="components-list"></div>
+  </div>
   
   <div class="demo-container">
     <h2>Message Field Component</h2>
-    <p>Type a message and press Enter or click the send button:</p>
+    <p>Try out the message field component with all its dependencies:</p>
     
     <ki-message-field placeholder="Type your message here..."></ki-message-field>
     <div class="output" id="message-output">Messages will appear here</div>
@@ -141,11 +222,23 @@
   
   <div class="demo-container">
     <h2>Included SVG Icons</h2>
-    <p>All SVG icons are included directly in the bundle - no server requests needed:</p>
+    <p>All SVG icons are embedded directly in the bundle - no server requests needed:</p>
     
     <div id="icons-grid" class="icons-grid">
       <!-- Icons will be added here by JavaScript -->
     </div>
+  </div>
+  
+  <div class="demo-container">
+    <h2>How Auto-Discovery Works</h2>
+    <p>The bundle now automatically:</p>
+    <ol>
+      <li>Discovers all components in the component directories</li>
+      <li>Analyzes each component to determine its dependencies</li>
+      <li>Sorts components based on their dependencies (topological sort)</li>
+      <li>Loads components in the correct order</li>
+    </ol>
+    <p>No hardcoded lists or manual registration required!</p>
   </div>
   
   <div class="demo-container">
@@ -154,9 +247,16 @@
     
     <pre><code>&lt;!-- Import the enhanced bundle -->
 &lt;script type="module">
-  import bundleInfo from 'https://cdn.jsdelivr.net/gh/yourusername/kunstige-komponenter@main/enhanced-bundle.js';
-  console.log(`Loaded ${bundleInfo.name} v${bundleInfo.version}`);
-  console.log(`Available icons: ${bundleInfo.svgIcons.join(', ')}`);
+  import KiComponents from 'https://cdn.jsdelivr.net/gh/yourusername/kunstige-komponenter@main/bundle.js';
+  
+  // Wait for components to be ready
+  KiComponents.ready(({ isReady, components }) => {
+    console.log(`Loaded ${components.length} components successfully:`, components);
+    
+    if (isReady) {
+      // Do something with the loaded components
+    }
+  });
 &lt;/script>
 
 &lt;!-- Then use any component -->
