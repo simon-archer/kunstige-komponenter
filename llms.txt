@@ -5,7 +5,7 @@ A minimal web component library with zero dependencies. Import the bundle or ind
 ## Basic Usage
 
 ```html
-<!-- Import all components -->
+<!-- Import all components at once -->
 <script type="module" src="./bundle.js"></script>
 
 <!-- Or import specific components -->
@@ -28,18 +28,28 @@ SVG icon component with built-in icons.
 Standard button with multiple variants.
 ```html
 <ki-button type="primary" size="medium">Label</ki-button>
-<!-- types: primary, secondary, tertiary, outline, ghost, danger -->
+<!-- types: primary, secondary, tertiary -->
 <!-- sizes: small, medium, large -->
-<!-- attributes: disabled, icon="IconName", icon-position="right" -->
+<!-- attributes: disabled, icon-only="IconName", icon-start="IconName", icon-end="IconName" -->
+<!-- events: ki-button-click -->
+```
+
+#### ki-toggle-button
+Button with toggle state.
+```html
+<ki-toggle-button size="medium">Toggle Me</ki-toggle-button>
+<!-- sizes: small, medium, large -->
+<!-- attributes: toggled, disabled, icon-start="IconName", icon-end="IconName" -->
+<!-- events: ki-toggle -->
 ```
 
 #### ki-control-button
 Icon-only circular button.
 ```html
-<ki-control-button icon="Search" size="medium"></ki-control-button>
+<ki-control-button size="medium"></ki-control-button>
 <!-- sizes: small, medium, large -->
-<!-- variants: default, primary, secondary, danger -->
-<!-- attributes: disabled -->
+<!-- attributes: disabled, state="send|loading|stop" -->
+<!-- events: ki-control-state-change -->
 ```
 
 #### ki-card
@@ -121,3 +131,11 @@ Set custom colors with CSS variables:
   --ki-focus-color: #4d90fe;
 }
 ```
+
+## Important Notes
+
+1. All components use the same focus style for accessibility
+2. The bundle.js uses direct imports, no runtime component discovery
+3. SVG icons are embedded in the bundle for offline use
+4. All components follow the same naming convention (ki-*)
+5. Event names follow the pattern ki-*-event (e.g., ki-button-click)
